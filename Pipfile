@@ -20,3 +20,7 @@ flask-login = "*"
 
 [requires]
 python_version = "3.9"
+
+
+[scripts]
+start = "python3 wsgi.py"

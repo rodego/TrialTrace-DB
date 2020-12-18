@@ -67,3 +67,76 @@ class Whitelist(db.Model):
 @login.user_loader
 def load_user(user_id):
     return Users.query.get(user_id)
+
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+@app.route("/setup")
+def setup():
+    email = os.getenv('SUPERADMIN')
+    password = os.getenv('SUPERADMIN_PW')
+    is_admin = True
+    domain = os.getenv('DOMAIN_WHITE')
+    if db.session.query(Users).filter(Users.email == email).count() == 0:
+                    data = Users(email, password, is_admin)
+                    db.session.add(data)
+                    db.session.commit()
+    if db.session.query(Whitelist).filter(Whitelist.domain == domain).count() == 0:
+                    data = Whitelist(domain)
+                    db.session.add(data)
+                    db.session.commit()
+    return render_template('index.html')
+
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'POST' and request.form['email'] and request.form['password']:
+        email = request.form['email']
+        password = request.form['password']
+        user = db.session.query(Users).filter(Users.email==email).first()
+        if not bool(user):
+            flash('not authorized', 'loginmsg danger')
+            return redirect(request.referrer)
+        elif user.password == password:
+            flash('welcome back', 'loginmsg success')
+            login_user(user)
+            return redirect(request.referrer)
+        else:
+            flash('not authorized', 'loginmsg danger')
+            return redirect(request.referrer)
+    return redirect(request.referrer)
+
+# @app.route('/signup', methods=['POST'])
+# def signup():
+#     if request.method == 'POST':
+#         email = request.form['email']
+#         password = request.form['password']
+#         incoming_domain = str(re.findall(r'\@(.*)', email)[0])
+#         print(incoming_domain)
+#         if db.session.query(Users).filter(Users.email == email).count() == 0 and db.session.query(Whitelist).filter(Whitelist.domain == incoming_domain).count() != 0:   
+#             data = Users(email, password, is_admin = True)
+#             db.session.add(data)
+#             db.session.commit()
+#             flash('signed up', 'alert alert-success')
+#             return redirect(request.referrer)
+#         else: 
+#             flash('not authorized', 'alert alert-danger')
+#             return redirect(request.referrer)
+#     return redirect(request.referrer)
+
+@app.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    if request.method == 'POST':
+        logout_user()
+        return redirect(request.referrer)
+    return redirect(request.referrer)
+
+@app.route('/admin', methods=['POST'])
+@login_required
+def admin():
+    if current_user.is_admin == True:
+        return render_template('admin.html')
+    flash('not authorized', 'loginmsg danger')
+    return redirect(request.referrer)
