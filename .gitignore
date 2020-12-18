@@ -1,0 +1,8 @@
+# Added
+.code-workspace
+.DS_Store
+*.csv
+.vscode
+__pycache__
+.env
+.pdf
