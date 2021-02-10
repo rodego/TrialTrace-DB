@@ -32,6 +32,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 login = LoginManager(app)
+admin = Admin(app)
 
 
 class UUserMixin(UserMixin):
@@ -62,6 +63,8 @@ class Whitelist(db.Model):
     
     def __init__(self, domain):
         self.domain = domain
+
+admin.add_view(ModelView(Users, db.session))
 
 
 @login.user_loader
@@ -137,6 +140,6 @@ def logout():
 @login_required
 def admin():
     if current_user.is_admin == True:
-        return render_template('admin.html')
+        return redirect(url_for('admin'))
     flash('not authorized', 'loginmsg danger')
     return redirect(request.referrer)
