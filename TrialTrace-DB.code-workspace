@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": false,
+			"**/.vscode": true,
+			"node_modules": true,
+	},
+	"svg.preview.background": "transparent"
+	}
+}
