@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"files.exclude": {
-			"**/.git": false,
+			"**/.git": true,
 			"**/.vscode": true,
 			"node_modules": true,
 	},
