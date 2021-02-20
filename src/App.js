@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import Login from "./components/Login"
 import Logout from "./components/Logout"
+import Layout from "./components/Layout"
 import { useAuth0 } from "@auth0/auth0-react";
 
 // fonts
@@ -16,7 +17,9 @@ const { user, isAuthenticated, isLoading } = useAuth0()
 
   return (
     <div className="App">
-        {/* {isAuthenticated ? <Logout /> : <Login />} */}
+        <Layout />
+        {isAuthenticated ? <Logout /> : <Login />}
+        <div><p>I am an elephant that wears a pink dress. Please don't let me down</p></div>
     </div>
   );
 }

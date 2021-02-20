@@ -1,8 +1,8 @@
-from api import db
+from app.main import db
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import func, text
 from uuid import uuid4
-from api.models.users import *
+from app.models.users import *
 
 class Data(db.Model):
     __tablename__ = "data"

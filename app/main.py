@@ -6,12 +6,14 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 import re
 import os
 
+from .api.routes import api
+
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../build/static", template_folder="../build")
     app.secret_key = os.getenv("SECRET_KEY")
 
     ENV = os.uname().sysname
@@ -29,9 +31,10 @@ def create_app():
     
     db.init_app(app)
     migrate.init_app(app,db)
-    from api.models.data import Data
-    from api.models.users import Users
+    from app.models.data import Data
+    from app.models.users import Users
     
+    app.register_blueprint(api)
 
 
     login.init_app(app)
