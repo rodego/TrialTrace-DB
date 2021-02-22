@@ -1,26 +1,60 @@
-import React, {useMemo} from "react"
+import React, {useMemo, useEffect, useState} from "react"
 import { useTable, useSortBy } from 'react-table'
  
  function Layout(props) {
-   console.log(props.items.data)
-   const data = useMemo(
-     () => [...props.items.data],
-     []
-   )
+
+   const initialItems = {'data': [{'we':'are wilds'}]}
+
+   const [items, setItems] = useState({'data': []})
+
+    useEffect(() => {
+      fetch('/api').then(response => response.json().then(responseData => {
+        // console.log(responseData.data)
+        setItems(responseData)
+
+      }))
+    }, [])   
+
+
+
+   const data = useMemo(() => [...items.data], [items.data])
+ 
+
+    // console.log('data')
+    console.log('columns')
+    console.log(get_keys(items.data))
+
+    function get_keys(props) {
+
+      const unique = [...new Set (props.flatMap(i => Object.keys(i)))]
+     
+      return ( unique.map((key, index) => ({Header : `Column${index + 1}`, accessor : `${key}`})))
+
+    }
+
+
  
    const columns = useMemo(
-     () => [
-       {
-         Header: 'Column 1',
-         accessor: 'col1', // accessor is the "key" in the data
-       },
-       {
-         Header: 'Column 2',
-         accessor: 'col2',
-       },
-     ],
-     []
+
+     () => [...get_keys(items.data)],
+     
+     
+    //  () =>
+    //  [
+    //    {
+    //      Header: 'Column 1',
+    //      accessor: 'col1', // accessor is the "key" in the data
+    //    },
+    //    {
+    //      Header: 'Column 2',
+    //      accessor: 'col2',
+
+    //    },
+    //  ],
+     [items.data]
    )
+
+  
  
    const {
      getTableProps,

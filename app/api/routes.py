@@ -6,7 +6,8 @@ api = Blueprint('api', __name__, url_prefix='/api')
 
 @api.route('/')
 def get():
-    return      jsonify(
+
+    items = jsonify(
         { 'data' : [{
          'col1': 'Hello',
          'col2': 'World',
@@ -26,11 +27,19 @@ def get():
        {
          'col1': 'hey',
          'col2': 'you',
+         'col3': 'you',
        }
        ,
        {
          'col1': 'i love',
          'col2': 'fra',
+         'col3': 'so much',
+         'col4': 'this',
+         'col5': 'that',
+         'col6': 'this',
        }
        ]
-       }), 200
+       })
+
+
+    return items, 200
