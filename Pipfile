@@ -16,6 +16,7 @@ marshmallow-sqlalchemy = "*"
 flask-admin = "*"
 flask-login = "*"
 celery = {extras = ["redis"], version = "*"}
+flask-cors = "*"
 
 [dev-packages]
 

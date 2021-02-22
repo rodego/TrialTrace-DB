@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, current_user
+from flask_cors import CORS
 import re
 import os
 
@@ -11,9 +12,10 @@ from .api.routes import api
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
+cors = CORS()
 
 def create_app():
-    app = Flask(__name__, static_folder="../build/static", template_folder="../build")
+    app = Flask(__name__)
     app.secret_key = os.getenv("SECRET_KEY")
 
     ENV = os.uname().sysname
@@ -38,13 +40,14 @@ def create_app():
 
 
     login.init_app(app)
+    cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
 
 
     
 
-    @app.route('/')
-    def index():
-        return render_template('index.html')
+    # @app.route('/')
+    # def index():
+    #     return render_template('index.html')
     
     @login.user_loader
     def load_user(user_id):

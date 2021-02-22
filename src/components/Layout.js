@@ -1,30 +1,14 @@
-import React from "react"
+import React, {useMemo} from "react"
 import { useTable, useSortBy } from 'react-table'
  
- function Layout() {
-   const data = React.useMemo(
-     () => [
-       {
-         col1: 'Hello',
-         col2: 'World',
-       },
-       {
-         col1: 'react-table',
-         col2: 'rocks',
-       },
-       {
-         col1: 'whatever',
-         col2: 'you want',
-       },
-       {
-         col1: 'whatever',
-         col2: 'you want',
-       },
-     ],
+ function Layout(props) {
+   console.log(props.items.data)
+   const data = useMemo(
+     () => [...props.items.data],
      []
    )
  
-   const columns = React.useMemo(
+   const columns = useMemo(
      () => [
        {
          Header: 'Column 1',
