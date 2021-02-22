@@ -17,6 +17,7 @@ flask-admin = "*"
 flask-login = "*"
 celery = {extras = ["redis"], version = "*"}
 flask-cors = "*"
+flask-restful = "*"
 
 [dev-packages]
 

@@ -19,13 +19,13 @@ const { user, isAuthenticated, isLoading } = useAuth0()
 
   return (
     <div className="App">
-        {/* <Layout  /> */}
-        {isAuthenticated ? 
+        <Layout  />
+        {/* {isAuthenticated ? 
         <>
         <Logout /> 
         <Layout />
         </>
-        : <Login />}
+        : <Login />} */}
     </div>
   );
 }

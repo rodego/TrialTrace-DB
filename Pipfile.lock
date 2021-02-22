@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "15489571d7db18c5a35e9461db3e45653bd4133073b8799a7275ff057ae01e7e"
+            "sha256": "8ee6a833426593994e31843ac22a4a328650489896c7f418f1f5243cb6660ca3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -30,6 +30,13 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==5.0.5"
+        },
+        "aniso8601": {
+            "hashes": [
+                "sha256:1c38967317cf761d2ccd908a9d4b654eace289d7bddfb586594e85911956af86",
+                "sha256:36b8db7035ae3e1308e56550d586f6c7c58cbc6f33357e76dd8dd3c138fbaa3b"
+            ],
+            "version": "==9.0.0"
         },
         "billiard": {
             "hashes": [
@@ -115,6 +122,14 @@
             ],
             "index": "pypi",
             "version": "==2.7.0"
+        },
+        "flask-restful": {
+            "hashes": [
+                "sha256:5ea9a5991abf2cb69b4aac19793faac6c032300505b325687d7c305ffaa76915",
+                "sha256:d891118b951921f1cec80cabb4db98ea6058a35e6404788f9e70d5b243813ec2"
+            ],
+            "index": "pypi",
+            "version": "==0.3.8"
         },
         "flask-sqlalchemy": {
             "hashes": [

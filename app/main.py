@@ -8,25 +8,36 @@ import re
 import os
 
 from .api.routes import api
+from .admin.routes import admin
+
+
+
+# instantiate components
 
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 cors = CORS()
 
+# environment
+
+ENV = os.uname().sysname
+
+
+if ENV == os.getenv("SYSTEM"):
+    masterconfig = {'debug': False, 'db': os.getenv("DATABASE_URL")}
+
+else:
+    masterconfig = {'debug': True, 'db': os.getenv("DEV_DATABASE_ADDRESS")}
+
+
+
+
 def create_app():
     app = Flask(__name__)
     app.secret_key = os.getenv("SECRET_KEY")
-
-    ENV = os.uname().sysname
-
-    if ENV == os.getenv("SYSTEM"):
-        app.debug = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
-    else:
-        app.debug = True
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DEV_DATABASE_ADDRESS")
-
+    app.debug = masterconfig['debug']
+    app.config['SQLALCHEMY_DATABASE_URI'] = masterconfig['db']
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
@@ -37,6 +48,7 @@ def create_app():
     from app.models.users import Users
     
     app.register_blueprint(api)
+    app.register_blueprint(admin)
 
 
     login.init_app(app)

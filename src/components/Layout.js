@@ -81,6 +81,13 @@ import { useTable, useSortBy } from 'react-table'
                  }}
                >
                  {column.render('Header')}
+                  <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                  </span>
                </th>
              ))}
            </tr>
