@@ -28,7 +28,7 @@ import { useTable, useSortBy } from 'react-table'
 
       const unique = [...new Set (props.flatMap(i => Object.keys(i)))]
      
-      return ( unique.map((key, index) => ({Header : `Column${index + 1}`, accessor : `${key}`})))
+      return ( unique.map((key, index) => ({Header : `${key}`, accessor : `${key}`})))
 
     }
 
@@ -105,7 +105,7 @@ import { useTable, useSortBy } from 'react-table'
                      style={{
                        padding: '10px',
                        border: 'solid 1px gray',
-                       background: 'papayawhip',
+                       background: 'white',
                      }}
                    >
                      {cell.render('Cell')}

@@ -18,6 +18,7 @@ flask-login = "*"
 celery = {extras = ["redis"], version = "*"}
 flask-cors = "*"
 flask-restful = "*"
+requests = "*"
 
 [dev-packages]
 
