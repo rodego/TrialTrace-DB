@@ -1,4 +1,4 @@
-from api import db
+from app.main import db
 from flask_login import UserMixin
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import func, text

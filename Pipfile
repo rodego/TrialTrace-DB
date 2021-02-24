@@ -15,12 +15,15 @@ marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 flask-admin = "*"
 flask-login = "*"
+celery = {extras = ["redis"], version = "*"}
+flask-cors = "*"
+flask-restful = "*"
+requests = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.9"
-
 
 [scripts]
 start = "python3 wsgi.py"

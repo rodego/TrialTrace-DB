@@ -1,21 +1,19 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Auth0Provider } from "@auth0/auth0-react";
+import Auth0ProviderWithHistory from "./auth/auth-provider";
 
 ReactDOM.render(
-  <React.StrictMode> 
-  
-  <Auth0Provider
-    domain="trial-trace.us.auth0.com"
-    clientId="og1fO9WykmVLbCU3v42FAHLVjGFFI0gN"
-    redirectUri={window.location.origin}
-  >
-    <App />
-  </Auth0Provider>
-  </React.StrictMode>,
+
+    <Router>
+      <Auth0ProviderWithHistory>
+        <App />
+      </Auth0ProviderWithHistory>
+    </Router>
+,
   document.getElementById('root')
 );
 
