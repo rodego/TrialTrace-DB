@@ -30,12 +30,9 @@ def get_all_trial_fields(self):
 def get_data_for_trial(self, nct, fields=[]):
     
     base_url = 'https://clinicaltrials.gov/api/query'
+    url = f'{base_url}/full_studies?expr={nct}&min_rnk=1&max_rnk=1&fmt=json'
 
-    # if fields == []:
-    #     url = f'{base_url}/full_studies?expr={nct}&min_rnk=1&max_rnk=1&fmt=json'
-    # else: 
-    field_concat = '%2C'.join(fields)
-    url = f'{base_url}/study_fields?expr={nct}&fields=NCTId{field_concat}&min_rnk=1&max_rnk=1&fmt=json'
+    if fields == []:
     
     response = requests.get(url)
     response_dict = response.json()
