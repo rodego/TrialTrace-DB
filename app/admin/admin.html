@@ -7,18 +7,16 @@
     </head>
     <body>
 
-        <form >
-            
-            <div  class="form-group">
+        <div>
+            <form action="/admin/trials" method="POST" class="form-group">
+
                 <textarea name="trial-list" id="" cols="70" rows="5" placeholder="List of NCT IDs"></textarea>
                 <br>
                 <br>
-                <input type="submit" value="Track" class="btn btn-primary" formaction="/admin/trials/mutate" method="POST"/>
-                <input type="submit" value="Drop" class="btn btn-danger" formaction="/admin/trials/mutate" method="DELETE"/>
-                <input type="submit" value="Update" class="btn btn-secondary" formaction="/admin/trials/mutate" method="POST"/>
-                <input type="submit" value="Submit" class="btn btn-secondary" formaction="/admin" method="POST"/>
-            </div>
-        </form>
+                <input type="submit" value="Track" class="btn btn-primary" />
+            <!-- <input type="submit" value="Drop" class="btn btn-danger" formaction="/admin/trials" /> -->
+            </form>
+        </div>
 
     </body>
 </html>

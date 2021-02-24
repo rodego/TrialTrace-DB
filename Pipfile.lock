@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "29b19312aa31699e7067a6da2967a803c58eb35085be8173b6511c012ecfc5f3"
+            "sha256": "8f61428efd3eb280c868ff280cd9880c97c12894c6ca5631f8eedbc0449359f5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -98,6 +98,14 @@
                 "sha256:b9f29d52abc4d6059f8e276132a111ab8d94980afe6a5432b9d996544afa95d5"
             ],
             "version": "==0.1.6"
+        },
+        "eralchemy": {
+            "hashes": [
+                "sha256:4daa1faba6c1f01c421f6fcc288681d973b8e4fdc781ac6557659878bcb957f3",
+                "sha256:be992624878278195c3240b90523acb35d97453f1a350c44b4311d4333940f0d"
+            ],
+            "index": "pypi",
+            "version": "==1.2.10"
         },
         "flask": {
             "hashes": [
@@ -336,6 +344,13 @@
             ],
             "index": "pypi",
             "version": "==2.8.6"
+        },
+        "pygraphviz": {
+            "hashes": [
+                "sha256:a7bec6609f37cf1e64898c59f075afd659106cf9356c5f387cecaa2e0cdb2304"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==1.7"
         },
         "python-dateutil": {
             "hashes": [
