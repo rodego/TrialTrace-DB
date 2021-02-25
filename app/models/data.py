@@ -5,10 +5,28 @@ from uuid import uuid4
 from app.models.users import *
 
 
+class Trials(db.Model):
+    __tablename__ = "trials"
+    trial_id = db.Column(db.VARCHAR(11),primary_key=True)
+    created_at = db.Column(db.DateTime, server_default=func.now())
+    last_updated_at = db.Column(db.DateTime, server_default=func.now())
+    inclusion = db.Column(db.VARCHAR)
+    def __init__(
+        self,
+        trial_id,
+        last_updated_at,
+        inclusion
+    ):
+        self.trial_id = trial_id
+        self.last_updated_at = last_updated_at
+        self.inclusion = inclusion
+
+
 class Data(db.Model):
     __tablename__ = "data"
     datum_uid = db.Column(UUID(as_uuid=True),primary_key=True, default=uuid4, nullable=False)
     datum_belongs_to_field = db.Column(UUID(as_uuid=True), db.ForeignKey('fields.field_uid'))
+    datum_belongs_to_trial = db.Column(db.VARCHAR(11), db.ForeignKey('trials.trial_id'))
     datum_value = db.Column(db.Text)
     datum_note = db.Column(db.Text)
     datum_source = db.Column(db.Text)
@@ -20,9 +38,10 @@ class Data(db.Model):
         self,
         datum_value,
         datum_belongs_to_field,
+        datum_belongs_to_trial,
         datum_note,
         datum_source,
-        created_at,
+        # created_at,
         # created_by,
         # datum_depends_on
     ):
