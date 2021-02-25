@@ -33,34 +33,32 @@ def get_data_for_trial(self, nct):
     url = f'{base_url}/full_studies?expr={nct}&min_rnk=1&max_rnk=1&fmt=xml'    
     response = requests.get(url)
 
-    return response
+    # return response
 
     root = ET.fromstring(response.content)
-    nct_from_response = root.find(".//Field[@Name='NCTId']")
-
+    nct_from_response = root.find(".//Field[@Name='NCTId']").text
     datapoints = root.findall('.//Field')
+
+    add_trial_to_trial_table(nct_from_response)
+
     for datapoint in datapoints:
-        field = str(datapoint.get('Name'))
+        field = datapoint.get('Name')
         #TODO add check for APIvrs
         field_uid_from_db = db.session.query(Fields.field_uid).filter(Fields.field_name == field)
         datapoint.set('Field ID', field_uid_from_db)
 
     
-    for datapoint in datapoints
-        datum_value_to_db = str(datapoint.text)
-        field_uid_to_db = str(datapoint.get('Field ID'))
-        if db.session.query(Data)\
-            .filter(Data.datum_belongs_to_trial == nct_from_response)\
-            .filter(Data.datum_belongs_to_field == field_uid_to_db)\
-            .filter(Data.datum_value == datum_value_to_db)\
-            .count() == 0:
+    for datapoint in datapoints:
+        datum_value_to_db = datapoint.text
+        field_uid_to_db = datapoint.get('Field ID')
+        if db.session.query(Data).filter(Data.datum_belongs_to_trial == nct_from_response).filter(Data.datum_belongs_to_field == field_uid_to_db).filter(Data.datum_value == datum_value_to_db).count() == 0:
 
             # blindspot here is what if a value goes back to the same value as it was before. 
             # need some sort of time element here
             # also what if there are repeat values for a field
 
-            insert = Data(datum_value_to_db,field_uid_to_db,nct_from_response,None,url)
-            db.session.add(insert)
+            data_to_insert = Data(datum_value_to_db,field_uid_to_db,nct_from_response,None,url)
+            db.session.add(data_to_insert)
             db.session.commit()
     
     return 201
@@ -68,6 +66,13 @@ def get_data_for_trial(self, nct):
 
 @task_queue.task(bind=True)
 def add_trial_to_trial_table(self, nct):
-    pass
-
+    
+    if db.session.query(Trials).filter(Trials.trial_id == nct).count() == 0:
+        trial_to_insert = Trials(nct,None,None)
+        db.session.add(trial_to_insert)
+        db.session.commit()
+    else:
+        db.session.query(Trials).filter(Trials.trial_id == nct).update({})
+        db.session.commit()
+    return 201
 

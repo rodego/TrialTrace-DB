@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, render_template, redirect, request
 from flask_restful import Resource, Api
-from ..tasks.tasks import get_data_for_trial
+from ..tasks.tasks import *
 import re
 from .fields import common_fields
 # from time import sleep
@@ -22,11 +22,12 @@ class Trials(Resource):
         trial_ids_raw = request.form['trial-list']
         if trial_ids_raw:
             trial_ids = re.findall(r'(NCT[0-9]+)', trial_ids_raw)
-            
             for trial in trial_ids:
-            return  201
+                get_data_for_trial(trial)
+            
+            return  redirect(request.referrer)
         else:
-            return {'message': 'no data added'}, 400
+            return redirect(request.referrer)
 
 
 

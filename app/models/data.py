@@ -9,7 +9,7 @@ class Trials(db.Model):
     __tablename__ = "trials"
     trial_id = db.Column(db.VARCHAR(11),primary_key=True)
     created_at = db.Column(db.DateTime, server_default=func.now())
-    last_updated_at = db.Column(db.DateTime, server_default=func.now())
+    last_updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
     inclusion = db.Column(db.VARCHAR)
     def __init__(
         self,
@@ -47,9 +47,10 @@ class Data(db.Model):
     ):
         self.datum_value = datum_value
         self.datum_belongs_to_field = datum_belongs_to_field
+        self.datum_belongs_to_trial = datum_belongs_to_trial
         self.datum_note = datum_note
         self.datum_source = datum_source
-        self.created_at = created_at
+        # self.created_at = created_at
         # self.created_by = created_by
         # self.datum_depends_on = datum_depends_on
 
