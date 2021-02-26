@@ -16,6 +16,12 @@ def show_trial_data(nct):
     all_data = db.session.query(Data).filter(Data.datum_belongs_to_trial == nct).all()
     return all_data
 
+@task_queue.task
+def retrieve_fields_from_db():
+    all_data = db.session.query(Fields).all()
+    return all_data
+
+
 # get all the possible fields from clinicaltrials.gov
 
 @task_queue.task(bind=True)

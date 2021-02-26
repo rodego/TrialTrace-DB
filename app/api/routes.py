@@ -27,7 +27,15 @@ class Example(Resource):
         cell =  {field : value}
         row.update(cell)
       data.append(row)
-    print(data)
-    return {'data': data}
+
+      fields = []
+      all_fields = retrieve_fields_from_db()
+      for field in all_fields:
+        name = str(field.field_name)
+        field_id = str(field.field_uid)
+        cell =  {field_id : name}
+        fields.append(cell)        
+    # print(fields)
+    return {'data': data, 'fields' : fields}
 
 rest.add_resource(Example, '/')
