@@ -5,7 +5,7 @@ import { useTable, useSortBy } from 'react-table'
 
    const initialItems = {'data': [{'we':'are wilds'}]}
 
-   const [items, setItems] = useState({'data': []})
+   const [items, setItems] = useState({'data': [], 'fields':[]})
 
     useEffect(() => {
       fetch('/api').then(response => response.json().then(responseData => {
@@ -20,23 +20,29 @@ import { useTable, useSortBy } from 'react-table'
    const data = useMemo(() => [...items.data], [items.data])
  
 
-    // console.log('data')
-    console.log('columns')
-    console.log(get_keys(items.data))
+// the get keys function builds the columns from the keys from the data, rather than a predifined set of columns from db like map_fields
 
-    function get_keys(props) {
+    // function get_keys(props) {
 
-      const unique = [...new Set (props.flatMap(i => Object.keys(i)))]
+    //   const unique = [...new Set (props.flatMap(i => Object.keys(i)))]
      
-      return ( unique.map((key, index) => ({Header : `${key}`, accessor : `${key}`})))
+    //   return ( unique.map((key, index) => ({Header : `${key}`, accessor : `${key}`})))
 
+    // }
+
+    function map_fields(props) {
+
+        const cols = props.map(x => ({Header : `${Object.values(x)}`, accessor : `${Object.keys(x)}`}))
+        
+        return(cols)
     }
 
-
+    map_fields(items.fields)
  
    const columns = useMemo(
 
-     () => [...get_keys(items.data)],
+    //  () => [...get_keys(items.data)],
+     () => [...map_fields(items.fields)],
      
      
     //  () =>
@@ -103,12 +109,19 @@ import { useTable, useSortBy } from 'react-table'
                    <td
                      {...cell.getCellProps()}
                      style={{
-                       padding: '10px',
                        border: 'solid 1px gray',
                        background: 'white',
                      }}
                    >
+                   <div 
+                   style={{
+                       margin: '5px',
+                       maxHeight: '80px',
+                       overflowY: 'scroll'
+                       }}
+                       >
                      {cell.render('Cell')}
+                   </div>
                    </td>
                  )
                })}
