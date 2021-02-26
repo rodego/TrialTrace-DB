@@ -13,7 +13,8 @@ rest = Api(admin)
 
 @admin.route('/')
 def index():
-    return render_template('admin.html')
+    all_trials = show_trials()
+    return render_template('admin.html', trials=all_trials)
 
 
 
@@ -23,9 +24,9 @@ class Trials(Resource):
         if trial_ids_raw:
             trial_ids = re.findall(r'(NCT[0-9]+)', trial_ids_raw)
             for trial in trial_ids:
-                get_data_for_trial(trial)
+                write_datapoints_to_db(trial)
             
-            return  redirect(request.referrer)
+            return redirect(request.referrer)
         else:
             return redirect(request.referrer)
 

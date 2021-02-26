@@ -21,8 +21,8 @@ import { useTable, useSortBy } from 'react-table'
  
 
     // console.log('data')
-    console.log('columns')
-    console.log(get_keys(items.data))
+    // console.log('columns')
+    // console.log(get_keys(items.data))
 
     function get_keys(props) {
 
@@ -103,12 +103,19 @@ import { useTable, useSortBy } from 'react-table'
                    <td
                      {...cell.getCellProps()}
                      style={{
-                       padding: '10px',
                        border: 'solid 1px gray',
                        background: 'white',
                      }}
                    >
+                   <div 
+                   style={{
+                       margin: '5px',
+                       maxHeight: '80px',
+                       overflowY: 'scroll'
+                       }}
+                       >
                      {cell.render('Cell')}
+                   </div>
                    </td>
                  )
                })}

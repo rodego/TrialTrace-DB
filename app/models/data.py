@@ -11,15 +11,18 @@ class Trials(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())
     last_updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
     inclusion = db.Column(db.VARCHAR)
+    inclusion_note = db.Column(db.Text)
     def __init__(
         self,
         trial_id,
         last_updated_at,
-        inclusion
+        inclusion,
+        inclusion_note
     ):
         self.trial_id = trial_id
         self.last_updated_at = last_updated_at
         self.inclusion = inclusion
+        self.inclusion_note = inclusion_note
 
 
 class Data(db.Model):
@@ -66,6 +69,9 @@ class Fields(db.Model):
     created_at = db.Column(db.DateTime, server_default=func.now())
     created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
     field_depends_on = db.Column(UUID(as_uuid=True), db.ForeignKey('fields.field_uid'))
+
+    #TODO add last modified date + onupdate 
+    #TODO add cron job and patch api version 
 
     def __init__(
         self,

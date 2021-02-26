@@ -17,6 +17,28 @@
             <!-- <input type="submit" value="Drop" class="btn btn-danger" formaction="/admin/trials" /> -->
             </form>
         </div>
+        <table style="width:100%">
+            <tr style='text-align:left'>
+                <th>NCT</th>
+                <th>Created At</th>
+                <th>Last Modified</th>
+                <th>Inclusion</th>
+                <th>Inclusion Note</th>
+            </tr>
+            {% for trial in trials%}
+            <tr >
+
+                <td>{{trial.trial_id}}</td>
+                <td>{{trial.created_at}}</td>
+                <td>{{trial.last_updated_at}}</td>
+                <td>{{trial.inclusion}}</td>
+                <td>{{trial.inclusion_note}}</td>
+                
+            </tr>
+            {%endfor%}
+
+
+        </table>
 
     </body>
 </html>
