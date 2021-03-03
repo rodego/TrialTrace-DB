@@ -46,11 +46,13 @@ def create_app():
     
     db.init_app(app)
     migrate.init_app(app,db)
-    from app.models.data import Data
-    from app.models.users import Users
 
-    from .api.routes import api
-    from .admin.routes import admin
+    import backend.models.data
+    import backend.models.users
+    import backend.models.ux
+
+    from backend.api.routes import api
+    from backend.admin.routes import admin
     
     app.register_blueprint(api)
     app.register_blueprint(admin)

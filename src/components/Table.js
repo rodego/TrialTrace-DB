@@ -1,5 +1,18 @@
 import React, {useMemo, useEffect, useState} from "react"
-import {useTable, useSortBy} from 'react-table'
+import {useTable, useSortBy, useColumnOrder} from 'react-table'
+
+function shuffle(arr) {
+  arr = [...arr]
+  const shuffled = []
+  while (arr.length) {
+    const rand = Math.floor(Math.random() * arr.length)
+    shuffled.push(arr.splice(rand, 1)[0])
+  }
+  return shuffled
+}
+
+
+
 
 // Create an editable cell renderer
 const EditableCell = ({
@@ -24,20 +37,26 @@ const EditableCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return <input value={value}
+    return <textarea value={value}
         onChange={onChange}
         onBlur={onBlur}
         style = {{
+                 font: 'inherit',
+                 display: 'flex',
                   padding: 0,
                   margin: 0,
                   border: 0,
                   }}/>
+                  {/* {value}</textarea> */}
 }
 
 // Set our editable cell renderer as the default Cell renderer
 const defaultColumn = {
     Cell: EditableCell
 }
+
+
+
 
 function Table ({columns, data, updateMyData, skipPageReset}) {
 
@@ -47,7 +66,9 @@ const {
     getTableBodyProps,
     headerGroups,
     rows,
-    prepareRow
+    prepareRow,
+    visibleColumns,
+    setColumnOrder,
 } = useTable({
     columns,
     data,
@@ -60,9 +81,22 @@ const {
     // That way we can call this function from our
     // cell renderer!
     updateMyData
-}, useSortBy)
+}, 
+    useSortBy,    
+    useColumnOrder
+)
+
+const randomizeColumns = () => {
+    setColumnOrder(shuffle(visibleColumns.map(d => d.id)))
+}
+
+
+
+
 
 return (
+    <>
+    <button onClick={() => randomizeColumns({})}>Randomize Columns</button>
     <table {...getTableProps()}
         style={{border: 'solid 1px blue'}}>
         <thead>{
@@ -95,8 +129,7 @@ return (
                 prepareRow(row)
                 return (
                     <tr {...row.getRowProps()}
-                    >{
-                        row.cells.map(cell => {
+                    >{row.cells.map(cell => {
                             return (
                                 <td {...cell.getCellProps()}
                                     style={
@@ -106,8 +139,8 @@ return (
                                         }
                                 }><div style={
                                         {
-                                            margin: '5px',
-                                            maxHeight: '80px',
+                                            // margin: '5px',
+                                            // maxHeight: '100px',
                                             overflowY: 'scroll'
                                         }
                                     }>{
@@ -121,6 +154,7 @@ return (
             })
         }</tbody>
     </table>
+    </>
 )}
 
 
