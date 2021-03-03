@@ -3,26 +3,39 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 
-const LoginButton = () => {
+const AddColumnButton = () => {
 
-    useEffect(() => {
-      fetch('/api').then(response => response.json().then(responseData => {
-        // console.log(responseData.data)
-        setItems(responseData)
+  const data = { 
+                field_name:  'Column', 
+                field_note:  'test',
+                field_meta:  'user generated',
+                };
 
-      }))
-    }, [])   
+  const addColumn = data => fetch('/api/newcol', {
+                                                  method: 'POST', // or 'PUT'
+                                                  headers: {
+                                                    'Content-Type': 'application/json',
+                                                  },
+                                                  body: JSON.stringify(data),
+                                                })
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                  console.log('Success:', data);
+                                                })
+                                                .catch((error) => {
+                                                  console.error('Error:', error);
+                                                });
 
   return <Button 
                 variant="contained" 
                 color="primary" 
                 disableElevation 
                 onClick={
-                    () => loginWithRedirect()
+                    () => addColumn(data)
                     }
                 >
-                Log In
+                Add Column
             </Button>;
 };
 
-export default LoginButton;
+export default AddColumnButton;

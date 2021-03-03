@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_restful import Resource, Api
 from ..tasks.tasks import *
 import json
@@ -8,10 +8,6 @@ import json
 api = Blueprint('api', __name__, url_prefix='/api')
 rest = Api(api)
 
-class Cell():
-  def __init__(self, field, value):
-    self.field = field
-    self.value = value
 
 class Example(Resource):
   def get(self):
@@ -38,4 +34,14 @@ class Example(Resource):
     # print(fields)
     return {'data': data, 'fields' : fields}
 
+
+
+class NewCol(Resource):
+  def post(self):
+    response = request.json
+    print(response)
+    add_field_to_db(response)
+    # pass
+
 rest.add_resource(Example, '/')
+rest.add_resource(NewCol, '/newcol')
