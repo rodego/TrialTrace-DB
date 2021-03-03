@@ -28,3 +28,4 @@ python_version = "3.9"
 
 [scripts]
 start = "python3 wsgi.py"
+worker = "celery -A app.queue_worker.task_queue worker -l INFO"

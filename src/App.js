@@ -3,7 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import Login from "./components/Login"
 import Logout from "./components/Logout"
-import Layout from "./components/Layout"
+import EditableTable from "./components/Table"
+import AddColumnButton from "./components/AddColumn"
 import { useAuth0 } from "@auth0/auth0-react";
 
 // fonts
@@ -16,10 +17,25 @@ function App() {
 
 const { user, isAuthenticated, isLoading } = useAuth0()
 
+// const initialItems = {'data': [{'initialize':'loading...'}], 'fields':['loading...','initialize']}
+
+const [items, setItems] = useState({'data': [{'initialize':'loading...'}], 'fields':[{'initialize':'loading...'}]})
+
+function GetData() {
+  useEffect(() => {
+    fetch('/api').then(response => response.json().then(responseData => {
+      // console.log(responseData.data)
+      setItems(responseData)
+
+    }))
+  },[])   
+}
 
   return (
     <div className="App">
-        <Layout  />
+        {GetData()}
+        <EditableTable  fetch_data={items.data} fetch_fields={items.fields}/>
+        <AddColumnButton />
         {/* {isAuthenticated ? 
         <>
         <Logout /> 

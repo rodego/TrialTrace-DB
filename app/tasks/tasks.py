@@ -21,6 +21,15 @@ def retrieve_fields_from_db():
     all_data = db.session.query(Fields).all()
     return all_data
 
+@task_queue.task
+def add_field_to_db(response_object):
+    field_name = response_object['field_name']
+    field_note = response_object['field_note']
+    field_meta = response_object['field_meta']
+    new_field = Fields(field_meta,field_name,field_note, 'user created')
+    db.session.add(new_field)
+    db.session.commit()
+    # return all_data
 
 # get all the possible fields from clinicaltrials.gov
 
