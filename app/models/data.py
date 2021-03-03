@@ -66,6 +66,7 @@ class Fields(db.Model):
     field_name = db.Column(db.Text)
     field_note = db.Column(db.Text)
     field_source = db.Column(db.Text)
+    field_include = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, server_default=func.now())
     created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
     field_depends_on = db.Column(UUID(as_uuid=True), db.ForeignKey('fields.field_uid'))

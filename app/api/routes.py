@@ -27,10 +27,11 @@ class Example(Resource):
       fields = []
       all_fields = retrieve_fields_from_db()
       for field in all_fields:
-        name = str(field.field_name)
-        field_id = str(field.field_uid)
-        cell =  {field_id : name}
-        fields.append(cell)        
+        if field.field_include:
+          name = str(field.field_name)
+          field_id = str(field.field_uid)
+          cell =  {field_id : name}
+          fields.append(cell)        
     # print(fields)
     return {'data': data, 'fields' : fields}
 
