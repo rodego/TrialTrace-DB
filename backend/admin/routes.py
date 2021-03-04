@@ -33,6 +33,8 @@ class ModelViewWithKeys(ModelView):
 
 class ModelViewWithEditsInline(ModelView):
     column_editable_list = ('view', 'field', 'field_order')
+    # edit_modal = True
+    # create_modal = True
 
 admin = Admin(index_view=MyHomeView(url='/'), template_mode='bootstrap3')
 
