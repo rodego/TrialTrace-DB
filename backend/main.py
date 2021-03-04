@@ -19,6 +19,7 @@ migrate = Migrate()
 login = LoginManager()
 cors = CORS()
 
+
 # environment
 
 ENV = os.uname().sysname
@@ -47,17 +48,18 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app,db)
 
-    import backend.models.data
+    # from backend.models.data import Trials, Data, Fields
+    # from backend.models.ux import Views
+
     import backend.models.users
-    import backend.models.ux
 
     from backend.api.routes import api
     from backend.admin.routes import admin
     
     app.register_blueprint(api)
-    app.register_blueprint(admin)
+    # app.register_blueprint(adminblu)
 
-
+    admin.init_app(app)
     login.init_app(app)
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
 

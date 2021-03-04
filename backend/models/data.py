@@ -24,6 +24,8 @@ class Trials(db.Model):
         self.last_updated_at = last_updated_at
         self.inclusion = inclusion
         self.inclusion_note = inclusion_note
+    def __repr__(self):
+         return f"<Trial (name='{self.trial_id}')>"
 
 
 class Data(db.Model):
@@ -91,4 +93,5 @@ class Fields(db.Model):
         # self.created_by = created_by
         # self.field_depends_on = field_depends_on
 
-
+    def __repr__(self):
+         return f"<Field name='{self.field_name}'>"
