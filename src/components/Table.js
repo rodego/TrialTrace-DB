@@ -1,5 +1,7 @@
 import React, {useMemo, useEffect, useState} from "react"
 import {useTable, useSortBy, useColumnOrder} from 'react-table'
+import Popup from 'reactjs-popup';
+
 
 function shuffle(arr) {
   arr = [...arr]
@@ -22,6 +24,22 @@ const EditableCell = ({
     updateMyData, // This is a custom function that we supplied to our table instance
 }) => { // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
+    const [show, setShow] = useState(false)
+
+    const handleClick = e => {
+        // e.preventDefault()
+        setShow(!show)
+        // console.log(e) 
+    }
+
+    const handleKeyPress = e => {
+        if(e.keyCode === 13) {
+        // e.preventDefault()
+        setShow(!show)
+        // console.log(e) 
+        }
+    }
+
 
     const onChange = e => {
         setValue(e.target.value)
@@ -37,17 +55,34 @@ const EditableCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return <textarea value={value}
+    return (
+        <>
+    <div onClick={handleClick}
+    style = {{
+        height: '60px',
+        display: show ? 'none': 'block',
+        }}
+    >
+    <p>{value}</p>
+    </div>
+    <div style ={{
+        display: show ? 'block': 'none',
+        // position: 'absolute',
+        }}>
+    <input value={value}
         onChange={onChange}
         onBlur={onBlur}
+        onKeyDown={handleKeyPress}
         style = {{
                  font: 'inherit',
-                 display: 'flex',
+                //  display: 'flex',
                   padding: 0,
                   margin: 0,
                   border: 0,
                   }}/>
-                  {/* {value}</textarea> */}
+    </div>
+    </>
+                  )
 }
 
 // Set our editable cell renderer as the default Cell renderer
