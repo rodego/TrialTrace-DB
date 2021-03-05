@@ -2,6 +2,15 @@ import React, {useMemo, useEffect, useState} from "react"
 import {useTable, useSortBy, useColumnOrder} from 'react-table'
 import Popup from 'reactjs-popup';
 
+//material-ui
+import {TextField} from '@material-ui/core'
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
 
 function shuffle(arr) {
   arr = [...arr]
@@ -25,29 +34,38 @@ const EditableCell = ({
 }) => { // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
     const [show, setShow] = useState(false)
+    // const [history, setHistory] = useState(false)
 
     const handleClick = e => {
-        // e.preventDefault()
+        // if(e.ctrlKey) {
         setShow(!show)
+        // getCellHistory(index,id)
         // console.log(e) 
+        // }
     }
 
     const handleKeyPress = e => {
-        if(e.keyCode === 13) {
-        // e.preventDefault()
+        if(e.metaKey && (e.keyCode === 13 || e.keyCode === 83)  ) {
+        e.preventDefault()
         setShow(!show)
         // console.log(e) 
+        }
+        if(e.keyCode === 27) {
+        setShow(!show)
         }
     }
 
 
-    const onChange = e => {
+    const handleChange = e => {
+        if(show) {
         setValue(e.target.value)
+        }
     }
 
     // We'll only update the external data when the input is blurred
-    const onBlur = () => {
+    const handleBlur = () => {
         updateMyData(index, id, value)
+        console.log(index, id, value)
     }
 
     // If the initialValue is changed external, sync it up with our state
@@ -57,7 +75,7 @@ const EditableCell = ({
 
     return (
         <>
-    <div onClick={handleClick}
+    <div onDoubleClick={handleClick}
     style = {{
         height: '60px',
         display: show ? 'none': 'block',
@@ -67,19 +85,22 @@ const EditableCell = ({
     </div>
     <div style ={{
         display: show ? 'block': 'none',
+        // backgroundColor: 'papayawhip'
         // position: 'absolute',
         }}>
-    <input value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        onKeyDown={handleKeyPress}
-        style = {{
-                 font: 'inherit',
-                //  display: 'flex',
-                  padding: 0,
-                  margin: 0,
-                  border: 0,
-                  }}/>
+    <form>
+        <TextField id="standard-basic" label="datapoint" 
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyPress}   
+            multiline     
+        />
+        <TextField id="standard-basic" label="note" 
+            multiline
+
+        />
+    </form>
     </div>
     </>
                   )
@@ -93,7 +114,7 @@ const defaultColumn = {
 
 
 
-function Table ({columns, data, updateMyData, skipPageReset}) {
+function BasicTable ({columns, data, updateMyData, skipPageReset}) {
 
 
 const {
@@ -258,7 +279,7 @@ useEffect(() => {
 
 return (
     <>
-        <Table 
+        <BasicTable 
             columns={columns}
             data={data}
             updateMyData={updateMyData}
