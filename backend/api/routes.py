@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_restful import Resource, Api
 from ..tasks.tasks import *
 import json
+import re
 
 
 
@@ -30,7 +31,8 @@ class Example(Resource):
         if field.field_include:
           name = str(field.field_name)
           field_id = str(field.field_uid)
-          cell =  {field_id : name}
+          human_friendly_name = re.sub(r'(?!\b[A-Z])([A-Z])',r' \1',name)
+          cell =  {field_id : human_friendly_name}
           fields.append(cell)        
     # print(fields)
     return {'data': data, 'fields' : fields}

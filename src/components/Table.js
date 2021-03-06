@@ -211,12 +211,17 @@ return (
                                 column.isSorted ? column.isSortedDesc ? <ArrowDownward fontSize={globalIconSize}/> : <ArrowUpward fontSize={globalIconSize}/> : <MoreVert fontSize={globalIconSize}/>
                             }
                         </IconButton></span>
-                        <div
+                        <span style={{'vertical-align': 'middle'}}
                             {...column.getResizerProps()}
                             className={`${tableStyle.resizer} ${
                                 column.isResizing ? tableStyle.isResizing : ''
                             }`}
-                         />
+                         >
+                         <svg className={tableStyle.columnSeparator} focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M11 19V5h2v14z"></path>
+                         </svg>
+                         
+                         </span>
                         </TableCell>
 
                     ))
