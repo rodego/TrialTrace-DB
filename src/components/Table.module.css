@@ -12,10 +12,16 @@
 
     
   }
-  .resizer.isResizing {
+.isResizing {
     background: red;
   }
 
-  .TableCell {
+  /* .TableCell {
     position: relative;
+  } */
+
+  .headerButton {
+    /* display: inline-block; */
+    width: 24px;
+
   }

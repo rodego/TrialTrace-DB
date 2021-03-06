@@ -3,6 +3,7 @@ import {useTable, useSortBy, useColumnOrder, useResizeColumns, useBlockLayout} f
 
 //material-ui
 import {TextField} from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,7 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Popover from '@material-ui/core/Popover';
-import { ArrowDownward, ArrowUpward} from '@material-ui/icons';
+import { ArrowDownward, ArrowUpward, MoreVert} from '@material-ui/icons';
 
 //custom components
 import AddColumn from './AddColumn'
@@ -22,6 +23,7 @@ import tableStyle from './Table.module.css'
 
 
 //Functions
+const globalIconSize = 'small'
 
 function shuffle(arr) {
   arr = [...arr]
@@ -185,25 +187,30 @@ const randomizeColumns = () => {
 return (
     <TableContainer component={Paper}>
     {/* <button onClick={() => randomizeColumns({})}>Randomize Columns</button> */}
-    <Table stickyHeader {...getTableProps()}
-        style={{border: 'solid 1px blue'}}>
+    <Table stickyHeader={true} {...getTableProps()}>
         <TableHead >{
             headerGroups.map(headerGroup => (
                 <TableRow 
                 {...headerGroup.getHeaderGroupProps()}
                 >{headerGroup.headers.map(column => (
 
-                        <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}
+                        <TableCell 
+                        // {...column.getHeaderProps(column.getSortByToggleProps())}
+                        {...column.getHeaderProps()}
                         >
+
                         <span style={{'vertical-align': 'middle'}}>{
                             column.render('Header')
                         }</span>
-                        <span style={{'vertical-align': 'middle'}}>{
-                                column.isSorted ? column.isSortedDesc ? <ArrowDownward fontSize="small"/> : <ArrowUpward fontSize="small"/> : ''
-                            }</span>
-                            <span style={{'vertical-align': 'middle'}}>
-                                
-                            </span>
+                        <span style={{'vertical-align': 'middle'}}
+                        className={tableStyle.headerButton}
+                        ><IconButton size={globalIconSize}
+                        {...column.getSortByToggleProps()}
+                        >
+                        {
+                                column.isSorted ? column.isSortedDesc ? <ArrowDownward fontSize={globalIconSize}/> : <ArrowUpward fontSize={globalIconSize}/> : <MoreVert fontSize={globalIconSize}/>
+                            }
+                        </IconButton></span>
                         <div
                             {...column.getResizerProps()}
                             className={`${tableStyle.resizer} ${
@@ -226,6 +233,7 @@ return (
                                 <TableCell {...cell.getCellProps()} >
                                 <div
                                 style={{height: 100,
+                                        // minWidth: 30,
                                         overflow: 'scroll'}}
                                 >
                                 <p>
