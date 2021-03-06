@@ -1,5 +1,5 @@
 import React, {useMemo, useEffect, useState} from "react"
-import {useTable, useSortBy, useColumnOrder} from 'react-table'
+import {useTable, useSortBy, useColumnOrder, useResizeColumns, useBlockLayout} from 'react-table'
 
 //material-ui
 import {TextField} from '@material-ui/core'
@@ -15,6 +15,13 @@ import { ArrowDownward, ArrowUpward} from '@material-ui/icons';
 
 //custom components
 import AddColumn from './AddColumn'
+
+//style
+import tableStyle from './Table.module.css'
+
+
+
+//Functions
 
 function shuffle(arr) {
   arr = [...arr]
@@ -81,7 +88,7 @@ const EditableCell = ({
         <>
     <div onDoubleClick={handleClick}
     style = {{
-        height: '60px',
+        // height: '60px',
         display: show ? 'none': 'block',
         }}
     >
@@ -128,7 +135,10 @@ const EditableCell = ({
 
 // Set our editable cell renderer as the default Cell renderer
 const defaultColumn = {
-    Cell: EditableCell
+    Cell: EditableCell,
+    minWidth: 30,
+    width: 400,
+    // maxWidth: 400,
 }
 
 
@@ -159,7 +169,9 @@ const {
     updateMyData
 }, 
     useSortBy,    
-    useColumnOrder
+    useColumnOrder,
+    useBlockLayout,
+    useResizeColumns
 )
 
 const randomizeColumns = () => {
@@ -175,28 +187,31 @@ return (
     {/* <button onClick={() => randomizeColumns({})}>Randomize Columns</button> */}
     <Table stickyHeader {...getTableProps()}
         style={{border: 'solid 1px blue'}}>
-        <TableHead>{
+        <TableHead >{
             headerGroups.map(headerGroup => (
                 <TableRow 
                 {...headerGroup.getHeaderGroupProps()}
                 >{headerGroup.headers.map(column => (
+
                         <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}
-                            style={
-                                {
-                                    cursor: 'pointer',
-                                    // borderBottom: 'solid 3px red',
-                                    // background: 'aliceblue',
-                                    // color: 'black',
-                                    // fontWeight: 'bold'
-                                }
-                            }
-                        ><span>{
+                        >
+                        <span style={{'vertical-align': 'middle'}}>{
                             column.render('Header')
                         }</span>
-                        <span style={{}}>{
-                                column.isSorted ? column.isSortedDesc ? <ArrowDownward/> : <ArrowUpward/> : ''
+                        <span style={{'vertical-align': 'middle'}}>{
+                                column.isSorted ? column.isSortedDesc ? <ArrowDownward fontSize="small"/> : <ArrowUpward fontSize="small"/> : ''
                             }</span>
+                            <span style={{'vertical-align': 'middle'}}>
+                                
+                            </span>
+                        <div
+                            {...column.getResizerProps()}
+                            className={`${tableStyle.resizer} ${
+                                column.isResizing ? tableStyle.isResizing : ''
+                            }`}
+                         />
                         </TableCell>
+
                     ))
                 }</TableRow>))
         }</TableHead>
@@ -208,21 +223,15 @@ return (
                     <TableRow {...row.getRowProps()}
                     >{row.cells.map(cell => {
                             return (
-                                <TableCell {...cell.getCellProps()}
-                                    style={
-                                        {
-                                            // border: 'solid 1px gray',
-                                            // background: 'white'
-                                        }
-                                }><div style={
-                                        {
-                                            // margin: '5px',
-                                            // maxHeight: '100px',
-                                            overflowY: 'scroll'
-                                        }
-                                    }>{
-                                        cell.render('Cell')
-                                    }</div>
+                                <TableCell {...cell.getCellProps()} >
+                                <div
+                                style={{height: 100,
+                                        overflow: 'scroll'}}
+                                >
+                                <p>
+                                {cell.render('Cell')}
+                                </p>
+                                </div>
                                 </TableCell>
                             )
                         })
