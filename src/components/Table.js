@@ -1,6 +1,5 @@
 import React, {useMemo, useEffect, useState} from "react"
 import {useTable, useSortBy, useColumnOrder} from 'react-table'
-import Popup from 'reactjs-popup';
 
 //material-ui
 import {TextField} from '@material-ui/core'
@@ -10,7 +9,12 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Popover from '@material-ui/core/Popover';
+import { ArrowDownward, ArrowUpward} from '@material-ui/icons';
 
+//custom components
+import AddColumn from './AddColumn'
 
 function shuffle(arr) {
   arr = [...arr]
@@ -82,12 +86,23 @@ const EditableCell = ({
         }}
     >
     <p>{value}</p>
-    </div>
-    <div style ={{
-        display: show ? 'block': 'none',
-        // backgroundColor: 'papayawhip'
-        // position: 'absolute',
-        }}>
+
+    <Popover 
+    // style ={{
+    //     display: show ? 'block': 'none',
+    //     // backgroundColor: 'papayawhip'
+    //     // position: 'absolute',
+    //     }}
+        open = {show}
+        anchorOrigin={{
+            vertical: 'center',
+            horizontal: 'center',
+        }}
+        transformOrigin={{
+            vertical: 'center',
+            horizontal: 'center',
+        }}
+        >
     <form>
         <TextField id="standard-basic" label="datapoint" 
             value={value}
@@ -97,10 +112,15 @@ const EditableCell = ({
             multiline     
         />
         <TextField id="standard-basic" label="note" 
+            // value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyPress}   
             multiline
 
         />
     </form>
+    </Popover>
     </div>
     </>
                   )
@@ -151,47 +171,48 @@ const randomizeColumns = () => {
 
 
 return (
-    <>
-    <button onClick={() => randomizeColumns({})}>Randomize Columns</button>
-    <table {...getTableProps()}
+    <TableContainer component={Paper}>
+    {/* <button onClick={() => randomizeColumns({})}>Randomize Columns</button> */}
+    <Table stickyHeader {...getTableProps()}
         style={{border: 'solid 1px blue'}}>
-        <thead>{
+        <TableHead>{
             headerGroups.map(headerGroup => (
-                <tr 
+                <TableRow 
                 {...headerGroup.getHeaderGroupProps()}
                 >{headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps(column.getSortByToggleProps())}
+                        <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}
                             style={
                                 {
                                     cursor: 'pointer',
-                                    borderBottom: 'solid 3px red',
-                                    background: 'aliceblue',
-                                    color: 'black',
-                                    fontWeight: 'bold'
+                                    // borderBottom: 'solid 3px red',
+                                    // background: 'aliceblue',
+                                    // color: 'black',
+                                    // fontWeight: 'bold'
                                 }
                             }
-                        >{
+                        ><span>{
                             column.render('Header')
-                        }<span>{
-                                column.isSorted ? column.isSortedDesc ? ' 🔽' : ' 🔼' : ''
+                        }</span>
+                        <span style={{}}>{
+                                column.isSorted ? column.isSortedDesc ? <ArrowDownward/> : <ArrowUpward/> : ''
                             }</span>
-                        </th>
+                        </TableCell>
                     ))
-                }</tr>))
-        }</thead>
-        <tbody {...getTableBodyProps()}>
+                }</TableRow>))
+        }</TableHead>
+        <TableBody {...getTableBodyProps()}>
             {
             rows.map(row => {
                 prepareRow(row)
                 return (
-                    <tr {...row.getRowProps()}
+                    <TableRow {...row.getRowProps()}
                     >{row.cells.map(cell => {
                             return (
-                                <td {...cell.getCellProps()}
+                                <TableCell {...cell.getCellProps()}
                                     style={
                                         {
-                                            border: 'solid 1px gray',
-                                            background: 'white'
+                                            // border: 'solid 1px gray',
+                                            // background: 'white'
                                         }
                                 }><div style={
                                         {
@@ -202,15 +223,15 @@ return (
                                     }>{
                                         cell.render('Cell')
                                     }</div>
-                                </td>
+                                </TableCell>
                             )
                         })
-                    }</tr>
+                    }</TableRow>
                 )
             })
-        }</tbody>
-    </table>
-    </>
+        }</TableBody>
+    </Table>
+    </TableContainer>
 )}
 
 
