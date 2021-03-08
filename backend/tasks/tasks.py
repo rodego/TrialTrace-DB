@@ -6,6 +6,17 @@ import requests
 import json
 
 
+
+
+@task_queue.task
+def store_df_in_queue(df):
+    store = df
+    return store
+    
+@task_queue.task
+def retrieve_df_from_queue():
+    return store_df_in_queue.result()
+
 @task_queue.task
 def show_trials():
     all_trials = db.session.query(Trials).all()

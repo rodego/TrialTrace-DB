@@ -1,7 +1,8 @@
 {%extends 'admin/master.html'%}
 
 {%block body%}
-
+<h4>Add new trials by NCT number</h4>
+<br>
 <form action="/add" method="POST" class="form-group">
 
     <textarea name="trial-list" id="" cols="70" rows="5" placeholder="List of NCT IDs"></textarea>
@@ -10,4 +11,50 @@
     <input type="submit" value="Track" class="btn btn-primary" />
 <!-- <input type="submit" value="Drop" class="btn btn-danger" formaction="/admin/trials" /> -->
 </form>
+
+<hr/>
+
+<h4>Add new Dataset</h4>
+<br>
+<form method="POST" action="/upload" enctype=multipart/form-data>
+    <input type=file name=file >
+    <br>
+    <input type=submit value=Upload class="btn btn-primary">
+</form>
+    <br>
+    <br>
+    <form method="POST" action="/import" enctype=multipart/form-data>
+        {%for option in options %}
+        <fieldset>
+            <input type='checkbox' id={{option}} value='{{option}}' name='include' unchecked>
+            <label for='include'> {{option}} </label>
+            <input type='radio' name='trial_id' value='{{option}}'>
+            <label for='trial_id'> Trial ID </label>
+            <select id="fields" name='{{option}}' >
+                <option value='new' selected>New Column</option>
+                {%for field in fields %}
+                <option value={{field.field_uid}}>{{field.field_name}}</option>
+                {%endfor%}
+            </select>
+        </fieldset>
+        {% endfor %}
+        <input type='submit' value='Import' class="btn btn-primary"/>
+    </form>
+
+
+<!-- TODO add support for search url -->
+
+<!-- <hr/> -->
+
+<!-- <h4>Add trials from search URL</h4>
+<br>
+<form action="/addsearch" method="POST" class="form-group">
+
+    <textarea name="search-url" id="" cols="70" rows="5" placeholder="List of NCT IDs"></textarea>
+    <br>
+    <br>
+    <input type="submit" value="Track" class="btn btn-primary" />
+</form> -->
+
+
 {%endblock body%}

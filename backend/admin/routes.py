@@ -8,6 +8,9 @@ from flask_admin.contrib.sqla import ModelView
 
 from backend.models.data import Trials, Data, Fields
 from backend.models.ux import Views, FieldsViews
+import pandas as pd
+
+
 
 
 class MyHomeView(AdminIndexView):
@@ -27,6 +30,36 @@ class MyHomeView(AdminIndexView):
             return redirect(request.referrer)
         else:
             return redirect(request.referrer)        
+    @expose('/upload', methods=('GET', 'POST'))
+    def upload(self):
+        if request.method == 'POST'and request.files.get('file'):
+            df = pd.read_csv(request.files.get('file'))
+            columns_to_import = df.columns
+            columns_available = retrieve_fields_from_db()
+            store_df_in_queue.delay(df)
+            # print(columns_to_import)
+            return self.render('admin/index.html', options=columns_to_import, fields=columns_available)
+        else:
+            return redirect(request.referrer)
+    @expose('/import', methods=('GET', 'POST'))
+    def import_fields(self):
+         if request.method == 'POST':
+            df = retrieve_df_from_queue()
+            print(df)
+            to_include = request.form.getlist('include')
+            for field in to_include:
+                mapped_to_field = request.form.get(field)
+                print(mapped_to_field)
+            # data = request.form.getlist('fields')
+            # print( to_include)
+            # pass
+            return self.render('admin/index.html')
+        
+
+
+
+
+
 
 class ModelViewWithKeys(ModelView):
     column_display_pk = True
