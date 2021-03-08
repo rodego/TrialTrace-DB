@@ -11,8 +11,9 @@ def show_trials():
     all_trials = db.session.query(Trials).all()
     return all_trials
 
+# return all_data
 @task_queue.task
-def show_trial_data(nct):
+def retrieve_trial_data(nct):
     all_data = db.session.query(Data).filter(Data.datum_belongs_to_trial == nct).all()
     return all_data
 
@@ -22,14 +23,28 @@ def retrieve_fields_from_db():
     return all_data
 
 @task_queue.task
-def add_field_to_db(response_object):
+def write_field_to_db(response_object):
     field_name = response_object['field_name']
     field_note = response_object['field_note']
     field_meta = response_object['field_meta']
     new_field = Fields(field_meta,field_name,field_note, 'user created')
     db.session.add(new_field)
     db.session.commit()
-    # return all_data
+
+@task_queue.task
+def write_datapoint_to_db(response_object):
+
+    # datum_value, datum_belongs_to_field, datum_belongs_to_trial, datum_note, datum_source
+    # {'columnId': 'a6314a06-611f-4d1e-8721-a55bcd5c76c1', 'rowId': 'NCT03371992', 'cell': 'Other: Evaluation of Response by RECIST'}
+
+    datum_value = response_object['cell']
+    datum_belongs_to_field = response_object['columnId']
+    datum_belongs_to_trial = response_object['rowId']
+    if db.session.query(Data).filter(Data.datum_belongs_to_trial == datum_belongs_to_trial).filter(Data.datum_belongs_to_field == datum_belongs_to_field).filter(Data.datum_value == datum_value).count() == 0:
+        new_datapoint = Data(datum_value, datum_belongs_to_field, datum_belongs_to_trial,'placeholder note','internal analysis')
+        db.session.add(new_datapoint)
+        db.session.commit()
+
 
 # get all the possible fields from clinicaltrials.gov
 

@@ -1,22 +1,92 @@
 import React, {useMemo, useEffect, useState} from "react"
-import {useTable, useSortBy} from 'react-table'
+import {useTable, useSortBy, useColumnOrder, useResizeColumns, useBlockLayout} from 'react-table'
+
+//material-ui
+import {TextField} from '@material-ui/core'
+import IconButton from '@material-ui/core/IconButton';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Popover from '@material-ui/core/Popover';
+import FormGroup from '@material-ui/core/FormGroup';
+import { ArrowDownward, ArrowUpward, MoreVert} from '@material-ui/icons';
+
+//custom components
+import AddColumn from './AddColumn'
+
+//style
+import tableStyle from './Table.module.css'
+
+
+
+//Functions
+const globalIconSize = 'small'
+
+function shuffle(arr) {
+  arr = [...arr]
+  const shuffled = []
+  while (arr.length) {
+    const rand = Math.floor(Math.random() * arr.length)
+    shuffled.push(arr.splice(rand, 1)[0])
+  }
+  return shuffled
+}
+
+
+
 
 // Create an editable cell renderer
 const EditableCell = ({
     value: initialValue,
-    row: {index},
+    row: {index, original},
     column: {id},
     updateMyData, // This is a custom function that we supplied to our table instance
 }) => { // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
+    const [show, setShow] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
+    // const [history, setHistory] = useState(false)
 
-    const onChange = e => {
+    const handleClick = e => {
+        // if(e.ctrlKey) {
+        setShow(!show)
+        setAnchorEl(e.currentTarget);
+        // getCellHistory(index,id)
+        // console.log(e) 
+        // }
+    }
+
+    const handleKeyPress = e => {
+        if(e.metaKey && (e.keyCode === 13 || e.keyCode === 83)  ) {
+        e.preventDefault()
+        setShow(!show)
+        handleBlur()
+        setAnchorEl(null);
+        // console.log(e) 
+        }
+        if(e.keyCode === 27) {
+        setShow(!show)
+        handleBlur()
+        setAnchorEl(null);
+        }
+    }
+
+
+    const handleChange = e => {
+        if(show) {
         setValue(e.target.value)
+        }
     }
 
     // We'll only update the external data when the input is blurred
-    const onBlur = () => {
-        updateMyData(index, id, value)
+    const handleBlur = () => {
+        updateMyData(index, id, value, original.rowid)
+        console.log(id, original.rowid, value)
+        // (rowIndex, columnId, value)
     }
 
     // If the initialValue is changed external, sync it up with our state
@@ -24,22 +94,76 @@ const EditableCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return <input value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        style = {{
-                  padding: 0,
-                  margin: 0,
-                  border: 0,
-                  }}/>
+
+    const anchorId = show ? 'popover-anchor' : null
+
+    return (
+        <>
+    <div onDoubleClick={handleClick}
+    style = {{
+        height: '60px',
+        }}
+        aria-describedby={anchorId}
+    >
+    <div
+    style = {{
+        display: show ? 'none': 'block',
+    }}
+    >{value}</div>
+
+    <Popover 
+    // style ={{
+    //     display: show ? 'block': 'none',
+    //     // backgroundColor: 'papayawhip'
+    //     // position: 'absolute',
+    //     }}
+        id={anchorId}
+        open = {show}
+        anchorEl = {anchorEl}
+        anchorOrigin={{
+            vertical: 'center',
+            horizontal: 'center',
+        }}
+        transformOrigin={{
+            vertical: 'center',
+            horizontal: 'center',
+        }}
+        >
+    <FormGroup>
+        <TextField id="standard-basic" label="datapoint" 
+            value={value}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyPress}   
+            multiline     
+        />
+        <TextField id="standard-basic" label="note" 
+            // value={value}
+            // onChange={handleChange}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyPress}   
+            multiline
+
+        />
+    </FormGroup>
+    </Popover>
+    </div>
+    </>
+                  )
 }
 
 // Set our editable cell renderer as the default Cell renderer
 const defaultColumn = {
-    Cell: EditableCell
+    Cell: EditableCell,
+    minWidth: 30,
+    width: 400,
+    // maxWidth: 400,
 }
 
-function Table ({columns, data, updateMyData, skipPageReset}) {
+
+
+
+function BasicTable ({columns, data, updateMyData, skipPageReset}) {
 
 
 const {
@@ -47,7 +171,9 @@ const {
     getTableBodyProps,
     headerGroups,
     rows,
-    prepareRow
+    prepareRow,
+    visibleColumns,
+    setColumnOrder,
 } = useTable({
     columns,
     data,
@@ -60,67 +186,91 @@ const {
     // That way we can call this function from our
     // cell renderer!
     updateMyData
-}, useSortBy)
+}, 
+    useSortBy,    
+    useColumnOrder,
+    useBlockLayout,
+    useResizeColumns
+)
+
+const randomizeColumns = () => {
+    setColumnOrder(shuffle(visibleColumns.map(d => d.id)))
+}
+
+
+
+
 
 return (
-    <table {...getTableProps()}
-        style={{border: 'solid 1px blue'}}>
-        <thead>{
+    <TableContainer component={Paper}>
+    {/* <button onClick={() => randomizeColumns({})}>Randomize Columns</button> */}
+    <Table stickyHeader={true} {...getTableProps()}>
+        <TableHead >{
             headerGroups.map(headerGroup => (
-                <tr 
+                <TableRow 
                 {...headerGroup.getHeaderGroupProps()}
                 >{headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                            style={
-                                {
-                                    cursor: 'pointer',
-                                    borderBottom: 'solid 3px red',
-                                    background: 'aliceblue',
-                                    color: 'black',
-                                    fontWeight: 'bold'
-                                }
-                            }
-                        >{
+
+                        <TableCell 
+                        // {...column.getHeaderProps(column.getSortByToggleProps())}
+                        {...column.getHeaderProps()}
+                        >
+
+                        <span style={{verticalAlign: 'middle'}}>{
                             column.render('Header')
-                        }<span>{
-                                column.isSorted ? column.isSortedDesc ? ' 🔽' : ' 🔼' : ''
-                            }</span>
-                        </th>
+                        }</span>
+                        <span style={{verticalAlign: 'middle'}}
+                        className={tableStyle.headerButton}
+                        ><IconButton size={globalIconSize}
+                        {...column.getSortByToggleProps()}
+                        >
+                        {
+                                column.isSorted ? column.isSortedDesc ? <ArrowDownward fontSize={globalIconSize}/> : <ArrowUpward fontSize={globalIconSize}/> : <MoreVert fontSize={globalIconSize}/>
+                            }
+                        </IconButton></span>
+                        <span style={{verticalAlign: 'middle'}}
+                            {...column.getResizerProps()}
+                            className={`${tableStyle.resizer} ${
+                                column.isResizing ? tableStyle.isResizing : ''
+                            }`}
+                         >
+                         <svg className={tableStyle.columnSeparator} focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M11 19V5h2v14z"></path>
+                         </svg>
+                         
+                         </span>
+                        </TableCell>
+
                     ))
-                }</tr>))
-        }</thead>
-        <tbody {...getTableBodyProps()}>
+                }</TableRow>))
+        }</TableHead>
+        <TableBody {...getTableBodyProps()}>
             {
             rows.map(row => {
                 prepareRow(row)
                 return (
-                    <tr {...row.getRowProps()}
-                    >{
-                        row.cells.map(cell => {
+                    <TableRow {...row.getRowProps()}
+                    >{row.cells.map(cell => {
                             return (
-                                <td {...cell.getCellProps()}
-                                    style={
-                                        {
-                                            border: 'solid 1px gray',
-                                            background: 'white'
-                                        }
-                                }><div style={
-                                        {
-                                            margin: '5px',
-                                            maxHeight: '80px',
-                                            overflowY: 'scroll'
-                                        }
-                                    }>{
-                                        cell.render('Cell')
-                                    }</div>
-                                </td>
+                                <TableCell {...cell.getCellProps()} >
+                                <div
+                                style={{height: 100,
+                                        // minWidth: 30,
+                                        overflow: 'scroll'}}
+                                >
+                                <p>
+                                {cell.render('Cell')}
+                                </p>
+                                </div>
+                                </TableCell>
                             )
                         })
-                    }</tr>
+                    }</TableRow>
                 )
             })
-        }</tbody>
-    </table>
+        }</TableBody>
+    </Table>
+    </TableContainer>
 )}
 
 
@@ -157,13 +307,37 @@ const [skipPageReset, setSkipPageReset] = useState(false)
 //force an update to get past loading screen
 useEffect(() => {setData(dataset)},[fetch_fields,fetch_data])
 
+
+//TODO add user to update data
+
+function writeToDB (column, row, value) {
+
+    const data = {'columnId':column, 'rowId':row, 'cell': value}
+
+    fetch('/api/newcell', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+}
+
 // We need to keep the table from resetting the pageIndex when we
 // Update data. So we can keep track of that flag with a ref.
 
 // When our cell renderer calls updateMyData, we'll use
 // the rowIndex, columnId and new value to update the
 // original data
-const updateMyData = (rowIndex, columnId, value) => { // We also turn on the flag to not reset the page
+const updateMyData = (rowIndex, columnId, value, rowId) => { // We also turn on the flag to not reset the page
     setSkipPageReset(true)
     setData(old => old.map((row, index) => {
         if (index === rowIndex) {
@@ -174,6 +348,7 @@ const updateMyData = (rowIndex, columnId, value) => { // We also turn on the fla
         }
         return row
     }))
+    writeToDB(columnId, rowId, value)
 }
 
 // After data chagnes, we turn the flag back off
@@ -189,7 +364,7 @@ useEffect(() => {
 
 return (
     <>
-        <Table 
+        <BasicTable 
             columns={columns}
             data={data}
             updateMyData={updateMyData}

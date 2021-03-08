@@ -1,17 +1,18 @@
-from app.main import db
+from backend.main import db
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import func, text
+from sqlalchemy.orm import relationship, backref
 from uuid import uuid4
-from app.models.users import *
+from backend.models.users import *
 
 
 class Trials(db.Model):
     __tablename__ = "trials"
     trial_id = db.Column(db.VARCHAR(11),primary_key=True)
-    created_at = db.Column(db.DateTime, server_default=func.now())
+    trial_created_at = db.Column(db.DateTime, server_default=func.now())
     last_updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
-    inclusion = db.Column(db.VARCHAR)
-    inclusion_note = db.Column(db.Text)
+    trial_inclusion = db.Column(db.VARCHAR)
+    trial_inclusion_note = db.Column(db.Text)
     def __init__(
         self,
         trial_id,
@@ -23,6 +24,8 @@ class Trials(db.Model):
         self.last_updated_at = last_updated_at
         self.inclusion = inclusion
         self.inclusion_note = inclusion_note
+    def __repr__(self):
+         return f"<Trial (name='{self.trial_id}')>"
 
 
 class Data(db.Model):
@@ -33,8 +36,8 @@ class Data(db.Model):
     datum_value = db.Column(db.Text)
     datum_note = db.Column(db.Text)
     datum_source = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, server_default=func.now())
-    created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
+    datum_created_at = db.Column(db.DateTime, server_default=func.now())
+    datum_created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
     datum_depends_on = db.Column(UUID(as_uuid=True), db.ForeignKey('data.datum_uid'))
     
     def __init__(
@@ -67,8 +70,8 @@ class Fields(db.Model):
     field_note = db.Column(db.Text)
     field_source = db.Column(db.Text)
     field_include = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, server_default=func.now())
-    created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
+    field_created_at = db.Column(db.DateTime, server_default=func.now())
+    field_created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
     field_depends_on = db.Column(UUID(as_uuid=True), db.ForeignKey('fields.field_uid'))
 
     #TODO add last modified date + onupdate 
@@ -89,3 +92,6 @@ class Fields(db.Model):
         self.field_source = field_source
         # self.created_by = created_by
         # self.field_depends_on = field_depends_on
+
+    def __repr__(self):
+         return f"<Field name='{self.field_name}'>"

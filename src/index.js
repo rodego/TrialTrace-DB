@@ -6,11 +6,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Auth0ProviderWithHistory from "./auth/auth-provider";
 
+const globalDisable = e => e.keyCode === 83 ? e.preventDefault : null
+
+
 ReactDOM.render(
 
     <Router>
       <Auth0ProviderWithHistory>
-        <App />
+        <App onKeyDown={globalDisable}/>
       </Auth0ProviderWithHistory>
     </Router>
 ,

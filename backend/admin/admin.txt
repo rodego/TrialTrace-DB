@@ -8,7 +8,7 @@
     <body>
 
         <div>
-            <form action="/admin/trials" method="POST" class="form-group">
+            <form action="/add" method="POST" class="form-group">
 
                 <textarea name="trial-list" id="" cols="70" rows="5" placeholder="List of NCT IDs"></textarea>
                 <br>
