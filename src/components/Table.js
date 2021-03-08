@@ -48,11 +48,13 @@ const EditableCell = ({
 }) => { // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
     const [show, setShow] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null);
     // const [history, setHistory] = useState(false)
 
     const handleClick = e => {
         // if(e.ctrlKey) {
         setShow(!show)
+        setAnchorEl(e.currentTarget);
         // getCellHistory(index,id)
         // console.log(e) 
         // }
@@ -63,11 +65,13 @@ const EditableCell = ({
         e.preventDefault()
         setShow(!show)
         handleBlur()
+        setAnchorEl(null);
         // console.log(e) 
         }
         if(e.keyCode === 27) {
         setShow(!show)
         handleBlur()
+        setAnchorEl(null);
         }
     }
 
@@ -89,13 +93,16 @@ const EditableCell = ({
         setValue(initialValue)
     }, [initialValue])
 
+
+    const anchorId = show ? 'popover-anchor' : null
+
     return (
         <>
     <div onDoubleClick={handleClick}
     style = {{
         height: '60px',
         }}
-        id = 'popover-anchor'
+        aria-describedby={anchorId}
     >
     <div
     style = {{
@@ -109,8 +116,9 @@ const EditableCell = ({
     //     // backgroundColor: 'papayawhip'
     //     // position: 'absolute',
     //     }}
+        id={anchorId}
         open = {show}
-        anchorEl = '#popover-anchor'
+        anchorEl = {anchorEl}
         anchorOrigin={{
             vertical: 'center',
             horizontal: 'center',
