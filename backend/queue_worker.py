@@ -1,4 +1,4 @@
-from backend import create_app, task_queue
+from backend.main import create_app, task_queue
 
 app = create_app
 
