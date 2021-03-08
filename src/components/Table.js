@@ -42,7 +42,7 @@ function shuffle(arr) {
 // Create an editable cell renderer
 const EditableCell = ({
     value: initialValue,
-    row: {original},
+    row: {index, original},
     column: {id},
     updateMyData, // This is a custom function that we supplied to our table instance
 }) => { // We need to keep and update the state of the cell normally
@@ -84,8 +84,9 @@ const EditableCell = ({
 
     // We'll only update the external data when the input is blurred
     const handleBlur = () => {
-        updateMyData(id, value)
+        updateMyData(index, id, value, original.rowid)
         console.log(id, original.rowid, value)
+        // (rowIndex, columnId, value)
     }
 
     // If the initialValue is changed external, sync it up with our state
@@ -306,13 +307,37 @@ const [skipPageReset, setSkipPageReset] = useState(false)
 //force an update to get past loading screen
 useEffect(() => {setData(dataset)},[fetch_fields,fetch_data])
 
+
+//TODO add user to update data
+
+function writeToDB (column, row, value) {
+
+    const data = {'columnId':column, 'rowId':row, 'cell': value}
+
+    fetch('/api/newcell', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+}
+
 // We need to keep the table from resetting the pageIndex when we
 // Update data. So we can keep track of that flag with a ref.
 
 // When our cell renderer calls updateMyData, we'll use
 // the rowIndex, columnId and new value to update the
 // original data
-const updateMyData = (rowIndex, columnId, value) => { // We also turn on the flag to not reset the page
+const updateMyData = (rowIndex, columnId, value, rowId) => { // We also turn on the flag to not reset the page
     setSkipPageReset(true)
     setData(old => old.map((row, index) => {
         if (index === rowIndex) {
@@ -323,6 +348,7 @@ const updateMyData = (rowIndex, columnId, value) => { // We also turn on the fla
         }
         return row
     }))
+    writeToDB(columnId, rowId, value)
 }
 
 // After data chagnes, we turn the flag back off

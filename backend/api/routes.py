@@ -45,8 +45,15 @@ class NewCol(Resource):
   def post(self):
     response = request.json
     print(response)
-    add_field_to_db(response)
+    write_field_to_db(response)
+    # pass
+class NewCell(Resource):
+  def post(self):
+    response = request.json
+    print(response)
+    write_datapoint_to_db(response)
     # pass
 
 rest.add_resource(Example, '/')
 rest.add_resource(NewCol, '/newcol')
+rest.add_resource(NewCell, '/newcell')
