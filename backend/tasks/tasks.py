@@ -12,7 +12,7 @@ def show_trials():
     return all_trials
 
 @task_queue.task
-def show_trial_data(nct):
+def retrieve_trial_data(nct):
     all_data = db.session.query(Data).filter(Data.datum_belongs_to_trial == nct).all()
     return all_data
 

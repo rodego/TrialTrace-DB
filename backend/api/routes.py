@@ -16,8 +16,10 @@ class Example(Resource):
     data = []
     trials = show_trials()
     for trial in trials:
-      datapoints = show_trial_data(trial.trial_id)
+      datapoints = retrieve_trial_data(trial.trial_id)
       row = {}
+      row_head = {'rowid': str(trial.trial_id)}
+      row.update(row_head)
       for datapoint in datapoints:
         value = str(datapoint.datum_value)
         field = str(datapoint.datum_belongs_to_field)

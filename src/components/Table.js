@@ -12,6 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Popover from '@material-ui/core/Popover';
+import FormGroup from '@material-ui/core/FormGroup';
 import { ArrowDownward, ArrowUpward, MoreVert} from '@material-ui/icons';
 
 //custom components
@@ -41,7 +42,7 @@ function shuffle(arr) {
 // Create an editable cell renderer
 const EditableCell = ({
     value: initialValue,
-    row: {index},
+    row: {original},
     column: {id},
     updateMyData, // This is a custom function that we supplied to our table instance
 }) => { // We need to keep and update the state of the cell normally
@@ -61,10 +62,12 @@ const EditableCell = ({
         if(e.metaKey && (e.keyCode === 13 || e.keyCode === 83)  ) {
         e.preventDefault()
         setShow(!show)
+        handleBlur()
         // console.log(e) 
         }
         if(e.keyCode === 27) {
         setShow(!show)
+        handleBlur()
         }
     }
 
@@ -77,8 +80,8 @@ const EditableCell = ({
 
     // We'll only update the external data when the input is blurred
     const handleBlur = () => {
-        updateMyData(index, id, value)
-        console.log(index, id, value)
+        updateMyData(id, value)
+        console.log(id, original.rowid, value)
     }
 
     // If the initialValue is changed external, sync it up with our state
@@ -94,7 +97,7 @@ const EditableCell = ({
         display: show ? 'none': 'block',
         }}
     >
-    <p>{value}</p>
+    <div>{value}</div>
 
     <Popover 
     // style ={{
@@ -112,7 +115,7 @@ const EditableCell = ({
             horizontal: 'center',
         }}
         >
-    <form>
+    <FormGroup>
         <TextField id="standard-basic" label="datapoint" 
             value={value}
             onChange={handleChange}
@@ -122,13 +125,13 @@ const EditableCell = ({
         />
         <TextField id="standard-basic" label="note" 
             // value={value}
-            onChange={handleChange}
+            // onChange={handleChange}
             onBlur={handleBlur}
             onKeyDown={handleKeyPress}   
             multiline
 
         />
-    </form>
+    </FormGroup>
     </Popover>
     </div>
     </>
@@ -199,10 +202,10 @@ return (
                         {...column.getHeaderProps()}
                         >
 
-                        <span style={{'vertical-align': 'middle'}}>{
+                        <span style={{verticalAlign: 'middle'}}>{
                             column.render('Header')
                         }</span>
-                        <span style={{'vertical-align': 'middle'}}
+                        <span style={{verticalAlign: 'middle'}}
                         className={tableStyle.headerButton}
                         ><IconButton size={globalIconSize}
                         {...column.getSortByToggleProps()}
@@ -211,7 +214,7 @@ return (
                                 column.isSorted ? column.isSortedDesc ? <ArrowDownward fontSize={globalIconSize}/> : <ArrowUpward fontSize={globalIconSize}/> : <MoreVert fontSize={globalIconSize}/>
                             }
                         </IconButton></span>
-                        <span style={{'vertical-align': 'middle'}}
+                        <span style={{verticalAlign: 'middle'}}
                             {...column.getResizerProps()}
                             className={`${tableStyle.resizer} ${
                                 column.isResizing ? tableStyle.isResizing : ''
