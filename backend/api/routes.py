@@ -33,7 +33,7 @@ class Example(Resource):
         if field.field_include:
           name = str(field.field_name)
           field_id = str(field.field_uid)
-          human_friendly_name = re.sub(r'(?!\b[A-Z])([A-Z])',r' \1',name)
+          human_friendly_name = re.sub(r'(?!\b[A-Z])(?![A-Z]{2,})([A-Z])',r' \1',name)
           cell =  {field_id : human_friendly_name}
           fields.append(cell)        
     # print(fields)

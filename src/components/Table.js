@@ -93,11 +93,15 @@ const EditableCell = ({
         <>
     <div onDoubleClick={handleClick}
     style = {{
-        // height: '60px',
-        display: show ? 'none': 'block',
+        height: '60px',
         }}
+        id = 'popover-anchor'
     >
-    <div>{value}</div>
+    <div
+    style = {{
+        display: show ? 'none': 'block',
+    }}
+    >{value}</div>
 
     <Popover 
     // style ={{
@@ -106,6 +110,7 @@ const EditableCell = ({
     //     // position: 'absolute',
     //     }}
         open = {show}
+        anchorEl = '#popover-anchor'
         anchorOrigin={{
             vertical: 'center',
             horizontal: 'center',

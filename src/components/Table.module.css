@@ -1,6 +1,6 @@
 .resizer {
     display: inline-block;
-    fill:rgba(81, 81, 81, 1);
+    fill:rgb(165, 165, 165);
     /* background: blue; */
     width: 24px;
     min-height: 56px;
@@ -24,9 +24,9 @@
   fill:rgb(39, 39, 39)
 }
 
-.isResizing {
-    /* background: red; */
-  }
+/* .isResizing {
+    background: red;
+  } */
 
   /* .TableCell {
     position: relative;
