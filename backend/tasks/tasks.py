@@ -4,18 +4,19 @@ from flask_sqlalchemy import SQLAlchemy
 import xml.etree.ElementTree as ET
 import requests
 import json
+from celery.result import AsyncResult
 
+# handoff = None
 
-
-
-@task_queue.task
-def store_df_in_queue(df):
-    store = df
-    return store
+@task_queue.task(bind=True)
+def store_df_in_queue(self, response=None):
+    response
+    # handoff = self.task_id
     
 @task_queue.task
-def retrieve_df_from_queue():
-    return store_df_in_queue.result()
+def retrieve_df_from_queue(task_id):
+    result = task_queue.AsyncResult(task_id).result
+    return result
 
 @task_queue.task
 def show_trials():

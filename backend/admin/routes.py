@@ -12,7 +12,6 @@ import pandas as pd
 
 
 
-
 class MyHomeView(AdminIndexView):
     @expose('/')
     def index(self):
@@ -33,19 +32,26 @@ class MyHomeView(AdminIndexView):
     @expose('/upload', methods=('GET', 'POST'))
     def upload(self):
         if request.method == 'POST'and request.files.get('file'):
-            df = pd.read_csv(request.files.get('file'))
+            response = request.files.get('file')
+            df = pd.read_csv(response)
+            handoff = df.to_json()
             columns_to_import = df.columns
             columns_available = retrieve_fields_from_db()
-            store_df_in_queue.delay(df)
-            # print(columns_to_import)
-            return self.render('admin/index.html', options=columns_to_import, fields=columns_available)
+            x = store_df_in_queue.delay(handoff)
+
+            print(x.task_id)
+            return self.render('admin/index.html', task=x.task_id, options=columns_to_import, fields=columns_available)
         else:
             return redirect(request.referrer)
     @expose('/import', methods=('GET', 'POST'))
     def import_fields(self):
          if request.method == 'POST':
-            df = retrieve_df_from_queue()
-            print(df)
+            # response = retrieve_df_from_queue()
+            # df = pd.read_json(response)
+            # print(df)
+            x = request.form.get('task')
+            sheet = retrieve_df_from_queue(x)
+            print(sheet)
             to_include = request.form.getlist('include')
             for field in to_include:
                 mapped_to_field = request.form.get(field)
