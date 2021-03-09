@@ -25,7 +25,7 @@ class Trials(db.Model):
         self.inclusion = inclusion
         self.inclusion_note = inclusion_note
     def __repr__(self):
-         return f"<Trial (name='{self.trial_id}')>"
+         return f"{self.trial_id}"
 
 
 class Data(db.Model):
@@ -39,6 +39,8 @@ class Data(db.Model):
     datum_created_at = db.Column(db.DateTime, server_default=func.now())
     datum_created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
     datum_depends_on = db.Column(UUID(as_uuid=True), db.ForeignKey('data.datum_uid'))
+    field = relationship("Fields", backref='field')
+    trial = relationship("Trials", backref='trial')
     
     def __init__(
         self,
@@ -73,6 +75,7 @@ class Fields(db.Model):
     field_created_at = db.Column(db.DateTime, server_default=func.now())
     field_created_by = db.Column(UUID(as_uuid=True), db.ForeignKey('users.user_uid'))
     field_depends_on = db.Column(UUID(as_uuid=True), db.ForeignKey('fields.field_uid'))
+    
 
     #TODO add last modified date + onupdate 
     #TODO add cron job and patch api version 
@@ -94,4 +97,4 @@ class Fields(db.Model):
         # self.field_depends_on = field_depends_on
 
     def __repr__(self):
-         return f"<Field name='{self.field_name}'>"
+         return f"{self.field_name}"

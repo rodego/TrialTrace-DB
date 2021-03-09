@@ -31,18 +31,22 @@ class MyHomeView(AdminIndexView):
             return redirect(request.referrer)        
     @expose('/upload', methods=('GET', 'POST'))
     def upload(self):
-        if request.method == 'POST'and request.files.get('file'):
+        if request.method == 'POST' and request.files.get('file'):
             response = request.files.get('file')
             df = pd.read_csv(response)
             handoff = df.to_json()
             columns_to_import = df.columns
-            columns_available = retrieve_fields_from_db()
+            #TODO filter for fields that are important
+            data_fields = retrieve_fields_from_db()
+            trial_fields = Trials.__table__.columns.keys()
             x = store_df_in_queue.delay(handoff)
 
-            print(x.task_id)
-            return self.render('admin/index.html', task=x.task_id, options=columns_to_import, fields=columns_available)
+            # print(trial_fields)
+            return self.render('admin/index.html', task=x.task_id, options=columns_to_import, data_fields=data_fields, trial_fields=trial_fields)
         else:
             return redirect(request.referrer)
+
+
     @expose('/import', methods=('GET', 'POST'))
     def import_fields(self):
          if request.method == 'POST':
@@ -50,9 +54,10 @@ class MyHomeView(AdminIndexView):
             # df = pd.read_json(response)
             # print(df)
             x = request.form.get('task')
-            sheet = retrieve_df_from_queue(x)
-            print(sheet)
+            sheet_object = retrieve_df_from_queue(x)
+            pd.read_json(sheet_object)
             to_include = request.form.getlist('include')
+            
             for field in to_include:
                 mapped_to_field = request.form.get(field)
                 print(mapped_to_field)

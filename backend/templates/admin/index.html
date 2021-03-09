@@ -29,13 +29,27 @@
         <fieldset>
             <input type='checkbox' id={{option}} value='{{option}}' name='include' unchecked>
             <label for='include'> {{option}} </label>
-            <input type='radio' name='trial_id' value='{{option}}'>
+            <!-- <input type='radio' name='trial_id' value='{{option}}'> -->
             <label for='trial_id'> Trial ID </label>
-            <select id="fields" name='{{option}}' >
-                <option value='new' selected>New Column</option>
-                {%for field in fields %}
+            <select id="trial-fields" name='{{option}}' >
+                
+                
+                <option value='' selected>--Map to Trial Field--</option>
+                {%for field in trial_fields %}
+                <option value={{field}}>{{field}}</option>
+                {%endfor%}
+                
+            </select>
+            <select id="data-fields" name='{{option}}' >
+
+
+                <option value='' selected>--Map to Data Field--</option>
+                <option value='new' >New Column</option>
+                {%for field in data_fields %}
                 <option value={{field.field_uid}}>{{field.field_name}}</option>
                 {%endfor%}
+
+
             </select>
         </fieldset>
         {% endfor %}
