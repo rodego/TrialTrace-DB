@@ -1,4 +1,4 @@
-from flask import jsonify, render_template, redirect, request, Blueprint
+from flask import jsonify, render_template, redirect, request, Blueprint, session
 from flask_restful import Resource, Api
 from ..tasks.tasks import *
 import re
@@ -34,7 +34,8 @@ class MyHomeView(AdminIndexView):
         if request.method == 'POST' and request.files.get('file'):
             response = request.files.get('file')
             df = pd.read_csv(response)
-            # handoff = df.to_json()
+            handoff = df.to_json()
+            session['dataframe'] = handoff
             columns_to_import = df.columns
             #TODO filter for fields that are important
             data_fields = retrieve_fields_from_db()
@@ -59,8 +60,10 @@ class MyHomeView(AdminIndexView):
             # df = pd.read_json(response)
             # print(df)
             # x = request.form.get('task')
-            # sheet_object = retrieve_df_from_queue(x)
-            # pd.read_json(sheet_object)
+            sheet_object = session.get('dataframe')
+            sheet = pd.read_json(sheet_object)
+            print(sheet)
+
             to_include = request.form.getlist('include')
             
             for field in to_include:

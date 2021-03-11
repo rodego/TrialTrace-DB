@@ -1,10 +1,12 @@
 
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, current_user
 from flask_cors import CORS
+from flask_session import Session
 from celery import Celery
+import redis
 import re
 import os
 
@@ -18,6 +20,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 cors = CORS()
+sess = Session()
 
 
 # environment
@@ -42,6 +45,9 @@ def create_app():
     app.debug = masterconfig['debug']
     app.config['SQLALCHEMY_DATABASE_URI'] = masterconfig['db']
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SESSION_TYPE'] = 'redis'
+    app.config['SESSION_REDIS'] = redis.from_url(masterconfig['task-broker'])
+
 
 
     
@@ -62,6 +68,8 @@ def create_app():
     admin.init_app(app)
     login.init_app(app)
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
+
+    sess.init_app(app)  
 
     task_queue.conf.update(app.config)
     

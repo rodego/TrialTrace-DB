@@ -21,6 +21,8 @@ flask-restful = "*"
 requests = "*"
 eralchemy = "*"
 pandas = "*"
+flask-session = "*"
+redis = "*"
 
 [dev-packages]
 
