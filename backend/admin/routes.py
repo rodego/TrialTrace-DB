@@ -34,15 +34,20 @@ class MyHomeView(AdminIndexView):
         if request.method == 'POST' and request.files.get('file'):
             response = request.files.get('file')
             df = pd.read_csv(response)
-            handoff = df.to_json()
+            # handoff = df.to_json()
             columns_to_import = df.columns
             #TODO filter for fields that are important
             data_fields = retrieve_fields_from_db()
             trial_fields = Trials.__table__.columns.keys()
-            x = store_df_in_queue.delay(handoff)
+            # x = store_df_in_queue.delay(handoff)
 
             # print(trial_fields)
-            return self.render('admin/index.html', task=x.task_id, options=columns_to_import, data_fields=data_fields, trial_fields=trial_fields)
+            return self.render('admin/index.html', 
+                                # task=x.task_id, 
+                                options=columns_to_import, 
+                                data_fields=data_fields, 
+                                trial_fields=trial_fields
+                                )
         else:
             return redirect(request.referrer)
 
@@ -53,9 +58,9 @@ class MyHomeView(AdminIndexView):
             # response = retrieve_df_from_queue()
             # df = pd.read_json(response)
             # print(df)
-            x = request.form.get('task')
-            sheet_object = retrieve_df_from_queue(x)
-            pd.read_json(sheet_object)
+            # x = request.form.get('task')
+            # sheet_object = retrieve_df_from_queue(x)
+            # pd.read_json(sheet_object)
             to_include = request.form.getlist('include')
             
             for field in to_include:

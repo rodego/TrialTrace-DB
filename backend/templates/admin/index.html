@@ -24,7 +24,7 @@
     <br>
     <br>
     <form method="POST" action="/import" enctype=multipart/form-data>
-            <input type='hidden' name='task' value='{{task}}'>
+            <!-- <input type='hidden' name='task' value='{{task}}'> -->
         {%for option in options %}
         <fieldset>
             <input type='checkbox' id={{option}} value='{{option}}' name='include' unchecked>
