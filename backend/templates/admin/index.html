@@ -25,7 +25,7 @@
 {%endif%}
 
 {%if url_for(request.endpoint) == '/upload'%}
-<form  enctype=multipart/form-data>
+<form  >
     <table class="table">
         <thead>
             <tr>
@@ -55,7 +55,7 @@
                     <label for='include'> {{option}} </label>
                 </td>
                 <td>
-                    <input type='checkbox' id={{option}} value='{{option}}' name='include' unchecked>
+                    <input type='checkbox' id='{{option}}' value='{{option}}' name='include' unchecked>
                 </td>
                 <td>
                     <select id="trial-fields" name='{{option}}' >
@@ -86,9 +86,12 @@
         </tbody>
 </table>
 
-    <input type='submit' value='Import' class="btn btn-primary" formmethod="POST" formaction="/import"/>
-    <input type='submit' value='Cancel' class="btn btn-secondary" formmethod="GET" formaction="/"/>
+    <input type='submit' value='Import' class="btn btn-primary" formmethod="POST" formaction="/import" formenctype="multipart/form-data">
+    <input type='submit' value='Cancel' class="btn btn-secondary" formmethod="GET" formaction="/ "/>
 </form>
+{%endif%}
+{% if message %}
+<code >{{ message }}</code>
 {%endif%}
 
 

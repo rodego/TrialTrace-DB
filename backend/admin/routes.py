@@ -24,7 +24,7 @@ class MyHomeView(AdminIndexView):
         if trial_ids_raw:
             trial_ids = re.findall(r'(NCT[0-9]+)', trial_ids_raw)
             for trial in trial_ids:
-                write_datapoints_to_db(trial)
+                write_datapoints_to_db.delay(trial)
             
             return redirect(request.referrer)
         else:
@@ -70,15 +70,24 @@ class MyHomeView(AdminIndexView):
 
             to_include = request.form.getlist('include')
 
+
+
+            # to_map = request.form.getlist[(include']
+            # to_add = request.form.getlist['include']
+
             mapping = {'to_include': to_include}
 
-            # process_csv.delay(sheet_object, mapping)
+            print(mapping)
+
+            process_csv.delay(sheet_object, mapping)
             
+
+            # for x in (x for x in xyz if x not in a)
             for field in to_include:
                 mapped_to_field = request.form.get(field)
                 print(mapped_to_field)
 
-            return self.render('admin/index.html', message="processed")
+            return self.render('admin/index.html', message=to_include)
         
 
 

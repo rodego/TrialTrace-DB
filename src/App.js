@@ -5,7 +5,9 @@ import Login from "./components/Login"
 import Logout from "./components/Logout"
 import EditableTable from "./components/Table"
 import AddColumnButton from "./components/AddColumn"
+import IconButton from '@material-ui/core/IconButton';  
 import { useAuth0 } from "@auth0/auth0-react";
+import {Refresh} from '@material-ui/icons';
 
 // fonts
 import "@fontsource/roboto/300.css"
@@ -17,25 +19,30 @@ function App() {
 
 const { user, isAuthenticated, isLoading } = useAuth0()
 
-// const initialItems = {'data': [{'initialize':'loading...'}], 'fields':['loading...','initialize']}
+const initialItems = {'data': [{'initialize':'loading...'}], 'fields':[{'initialize':'loading...'}]}
 
-const [items, setItems] = useState({'data': [{'initialize':'loading...'}], 'fields':[{'initialize':'loading...'}]})
+const [items, setItems] = useState(initialItems)
 
-function GetData() {
-  useEffect(() => {
+const GetData = () => {
     fetch('/api').then(response => response.json().then(responseData => {
       // console.log(responseData.data)
       setItems(responseData)
+      console.log('refreshed')
 
     }))
-  },[])   
-}
+  }
+
+  useEffect(() => {
+        GetData()
+    }, [])
 
   return (
     <div className="App">
-        {GetData()}
+        <IconButton onClick={GetData}> 
+        <Refresh/>
+        </IconButton>
+        <AddColumnButton triggerRefresh={GetData}/>
         <EditableTable  fetch_data={items.data} fetch_fields={items.fields}/>
-        <AddColumnButton />
         {/* {isAuthenticated ? 
         <>
         <Logout /> 

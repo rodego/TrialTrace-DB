@@ -78,21 +78,21 @@ def write_datapoints_to_db(self, nct):
     base_url = 'https://clinicaltrials.gov/api/query'
     url = f'{base_url}/full_studies?expr={nct}&min_rnk=1&max_rnk=1&fmt=xml'    
     
-    response = fetch_trial_document(url)
+    response = fetch_trial_document.delay(url)
 
     root = ET.fromstring(response.content)
     nct_from_response = root.find(".//Field[@Name='NCTId']").text
     datapoints = root.findall('.//Field')
 
-    add_trial_to_trial_table(nct_from_response)
+    add_trial_to_trial_table.delay(nct_from_response)
 
     for datapoint in datapoints:
-        field_uid_from_db = get_field_uid_from_db(datapoint)
+        field_uid_from_db = get_field_uid_from_db.delay(datapoint)
         datapoint.set('Field ID', field_uid_from_db)
 
     
     for datapoint in datapoints:
-        add_datapoint_to_db(datapoint,nct_from_response, url)
+        add_datapoint_to_db.delay(datapoint,nct_from_response, url)
     
     return 201
 
@@ -148,4 +148,5 @@ def add_datapoint_to_db(self,datapoint_object, nct_from_response, url):
 
 @task_queue.task
 def process_csv(csv, mapping):
-    pass
+
+    return {csv, mapping}

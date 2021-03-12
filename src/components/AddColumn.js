@@ -3,7 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 
 
-const AddColumnButton = () => {
+
+const AddColumnButton = (props) => {
 
   const data = { 
                 field_name:  'Column', 
@@ -29,10 +30,9 @@ const AddColumnButton = () => {
   return <Button 
                 variant="contained" 
                 color="primary" 
-                disableElevation 
-                onClick={
-                    () => addColumn(data)
-                    }
+                disableElevation
+                onMouseDown={() => addColumn(data)}
+                onMouseUp = {props.triggerRefresh}
                 >
                 Add Column
             </Button>;
