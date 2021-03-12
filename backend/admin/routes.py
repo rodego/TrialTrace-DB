@@ -34,20 +34,28 @@ class MyHomeView(AdminIndexView):
         if request.method == 'POST' and request.files.get('file'):
             response = request.files.get('file')
             df = pd.read_csv(response)
+            columns_to_import = df.columns
+            
+            #TODO filter for fields that are important
+
+            def high_value(field):
+                if field.field_include == True:
+                    return True
+                else: False
+
+            db_fields = retrieve_fields_from_db()
+
+            data_fields = list(filter(high_value,db_fields))
+            trial_fields = Trials.__table__.columns.keys()
+            
+            # store as backend session to be recalled later
             handoff = df.to_json()
             session['dataframe'] = handoff
-            columns_to_import = df.columns
-            #TODO filter for fields that are important
-            data_fields = retrieve_fields_from_db()
-            trial_fields = Trials.__table__.columns.keys()
-            # x = store_df_in_queue.delay(handoff)
 
-            # print(trial_fields)
             return self.render('admin/index.html', 
-                                # task=x.task_id, 
                                 options=columns_to_import, 
                                 data_fields=data_fields, 
-                                trial_fields=trial_fields
+                                trial_fields=trial_fields,
                                 )
         else:
             return redirect(request.referrer)
@@ -56,23 +64,21 @@ class MyHomeView(AdminIndexView):
     @expose('/import', methods=('GET', 'POST'))
     def import_fields(self):
          if request.method == 'POST':
-            # response = retrieve_df_from_queue()
-            # df = pd.read_json(response)
-            # print(df)
-            # x = request.form.get('task')
             sheet_object = session.get('dataframe')
-            sheet = pd.read_json(sheet_object)
-            print(sheet)
+            # sheet = pd.read_json(sheet_object)
+
 
             to_include = request.form.getlist('include')
+
+            mapping = {'to_include': to_include}
+
+            # process_csv.delay(sheet_object, mapping)
             
             for field in to_include:
                 mapped_to_field = request.form.get(field)
                 print(mapped_to_field)
-            # data = request.form.getlist('fields')
-            # print( to_include)
-            # pass
-            return self.render('admin/index.html')
+
+            return self.render('admin/index.html', message="processed")
         
 
 
@@ -83,16 +89,20 @@ class MyHomeView(AdminIndexView):
 class ModelViewWithKeys(ModelView):
     column_display_pk = True
 
-class ModelViewWithEditsInline(ModelView):
-    column_editable_list = ('view', 'field', 'field_order')
-    # edit_modal = True
-    # create_modal = True
+
+#TODO make this into a single class that accepts kwargs to change inline editable columns
+class FieldViewsEdit(ModelView):
+    column_editable_list = ['field_order', 'field', 'view']
+class FieldEdit(ModelView):
+    column_editable_list = ['field_include']
+
+
 
 admin = Admin(index_view=MyHomeView(url='/'), template_mode='bootstrap3')
 
 admin.add_view(ModelViewWithKeys(Trials, db.session))
 admin.add_view(ModelView(Data, db.session))
-admin.add_view(ModelView(Fields, db.session))
+admin.add_view(FieldEdit(Fields, db.session ))
 admin.add_view(ModelView(Views, db.session))
-admin.add_view(ModelViewWithEditsInline(FieldsViews, db.session))
+admin.add_view(FieldViewsEdit(FieldsViews, db.session))
 

@@ -143,3 +143,9 @@ def add_datapoint_to_db(self,datapoint_object, nct_from_response, url):
         data_to_insert = Data(datum_value_to_db,field_uid_to_db,nct_from_response,None,url)
         db.session.add(data_to_insert)
         db.session.commit()
+
+
+
+@task_queue.task
+def process_csv(csv, mapping):
+    pass

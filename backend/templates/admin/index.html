@@ -16,45 +16,80 @@
 
 <h4>Add new Dataset</h4>
 <br>
+{%if url_for(request.endpoint) == '/'%}
 <form method="POST" action="/upload" enctype=multipart/form-data>
     <input type=file name=file >
     <br>
     <input type=submit value=Upload class="btn btn-primary">
 </form>
-    <br>
-    <br>
-    <form method="POST" action="/import" enctype=multipart/form-data>
-            <!-- <input type='hidden' name='task' value='{{task}}'> -->
-        {%for option in options %}
-        <fieldset>
-            <input type='checkbox' id={{option}} value='{{option}}' name='include' unchecked>
-            <label for='include'> {{option}} </label>
-            <!-- <input type='radio' name='trial_id' value='{{option}}'> -->
-            <label for='trial_id'> Trial ID </label>
-            <select id="trial-fields" name='{{option}}' >
-                
-                
-                <option value='' selected>--Map to Trial Field--</option>
-                {%for field in trial_fields %}
-                <option value={{field}}>{{field}}</option>
-                {%endfor%}
-                
-            </select>
-            <select id="data-fields" name='{{option}}' >
+{%endif%}
 
+{%if url_for(request.endpoint) == '/upload'%}
+<form  enctype=multipart/form-data>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">
+                    Column from CSV
+                </th>
+                <th scope="col">
+                    Import?
+                </th>
+                <th scope="col">
+                    Map to Trials Table
+                </th>
+                <th scope="col">
+                    Map to Field Table
+                </th>
+                <th scope="col">
+                    Notes
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+                {%for option in options %}
+                <fieldset>
+            <tr>
 
-                <option value='' selected>--Map to Data Field--</option>
-                <option value='new' >New Column</option>
-                {%for field in data_fields %}
-                <option value={{field.field_uid}}>{{field.field_name}}</option>
-                {%endfor%}
+                <td>
+                    <label for='include'> {{option}} </label>
+                </td>
+                <td>
+                    <input type='checkbox' id={{option}} value='{{option}}' name='include' unchecked>
+                </td>
+                <td>
+                    <select id="trial-fields" name='{{option}}' >
+                        <option value='' selected>-select-</option>
+                        {% for field in trial_fields %}
+                        <option value='{{ field }}'>{{ field }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
 
+                <td>
+                    <select id="data-fields" name='{{ option }}' >
+                        <option value='' selected>-select-</option>
+                        <option value='new' >New Column</option>
+                        {% for x in data_fields %}
+                        <option value='{{ x.field_uid }}'>{{ x.field_name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
 
-            </select>
+                <td>
+                    <input type="text" name='{{ option }}' id="note">
+                </td>
+
+            </tr>
         </fieldset>
-        {% endfor %}
-        <input type='submit' value='Import' class="btn btn-primary"/>
-    </form>
+                {% endfor %}
+        </tbody>
+</table>
+
+    <input type='submit' value='Import' class="btn btn-primary" formmethod="POST" formaction="/import"/>
+    <input type='submit' value='Cancel' class="btn btn-secondary" formmethod="GET" formaction="/"/>
+</form>
+{%endif%}
 
 
 <!-- TODO add support for search url -->
